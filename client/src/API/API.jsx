@@ -1,0 +1,37 @@
+import { User, Card, Game } from "../../../server/models/models.mjs";
+
+const URI = "http://localhost:3001/api"
+
+
+// get 1 card randomly
+export async function getRandomCard() {
+    try {
+        const response = await fetch(`${URI}/cards/random`);
+        if (response.ok) {
+            const card = await response.json();
+            return new Card(card.description, card.imageUrl, card.bad_luck_index);
+        }
+        else {
+            throw new Error(error);
+        }
+    } catch (error) {
+        throw new Error("Network error in getting a random card: " + error);
+    }
+}
+
+
+// get 3 cards randomly
+export async function getThreeRandomCards() {
+    try {
+        const response = await fetch(`${URI}/cards/random/3`);
+        if (response.ok) {
+            const cards = await response.json();
+            return cards.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));
+        } else {
+            throw new Error(error);
+        }
+    } catch (error) {
+        throw new Error("Network error in getting three random cards: " + error);
+    }
+}
+
