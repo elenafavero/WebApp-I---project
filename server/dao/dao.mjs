@@ -1,28 +1,32 @@
-import db from '../db.js';
-import { Card } from './models/models.js';
+import { Card } from '../models/models.mjs';
+import db from '../database/db.mjs';
+
 
 
 export const getRandomCard = () => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM Card ORDER BY RANDOM() LIMIT 1`;
     db.get(sql, [], (err, row) => {
-      if (err) 
+      if (err)
         reject(err);
-      else 
+      else
         resolve(new Card(row.description, row.image_url, row.bad_luck_index));
     });
   });
 };
 
 
-export const getThreeRandomCards = () => {
+export const getThreeRandomCards = async () => {
   return new Promise((resolve, reject) => {
     const sql = `SELECT * FROM Card ORDER BY RANDOM() LIMIT 3`;
     db.all(sql, [], (err, rows) => {
-      if (err) 
+      if (err) {
         reject(err);
-      else 
-        resolve(rows.map(row => new Card(row.description, row.image_url, row.bad_luck_index)));
+      }
+      else {
+        const cards = rows.map(row => new Card(row.description, row.image_url, row.bad_luck_index));
+        resolve(cards);
+      }
     });
   });
 };

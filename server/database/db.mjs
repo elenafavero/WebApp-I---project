@@ -1,13 +1,17 @@
-import sqlite3 from 'sqlite3';
-import { open } from 'sqlite';
-import fs from 'fs/promises';
+import sqlite from 'sqlite3';
 
-const db = await open({
-  filename: './db.sqlite',
-  driver: sqlite3.Database
+/*
+TODO:
+- prima hai creato il db (in codice qua)
+- poi hai cancellato quel codice e lo hai solo aperto
+questo perchpè altrimenti niente andava
+*/
+
+
+const db = new sqlite.Database('./database/db.sqlite', (err) => {
+    if (err) {
+        console.error('Error opening database ' + err.message);
+    }
 });
-
-const schema = await fs.readFile('./schema.sql', 'utf-8');
-await db.exec(schema);
 
 export default db;

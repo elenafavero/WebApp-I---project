@@ -1,20 +1,21 @@
 
 
-CREATE TABLE User (
+CREATE TABLE IF NOT EXISTS User (
   id INTEGER PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password_hash TEXT NOT NULL
 );
 
-CREATE TABLE Card (
+CREATE TABLE IF NOT EXISTS Card (
   id INTEGER PRIMARY KEY,
   description TEXT NOT NULL,
   image_url TEXT NOT NULL,
   bad_luck_index REAL UNIQUE NOT NULL
 );
 
-CREATE TABLE Round (
+/*
+CREATE TABLE IF NOT EXISTS Round (
   id INTEGER PRIMARY KEY,
   game_id INTEGER NOT NULL,
   card_id INTEGER NOT NULL,
@@ -24,8 +25,9 @@ CREATE TABLE Round (
   FOREIGN KEY (game_id) REFERENCES Game(id),
   FOREIGN KEY (card_id) REFERENCES Card(id)
 );
+*/
 
-CREATE TABLE Game (
+CREATE TABLE IF NOT EXISTS Game (
   id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
   -- status TEXT,
@@ -34,12 +36,12 @@ CREATE TABLE Game (
   FOREIGN KEY (user_id) REFERENCES User(id)
 );
 
-INSERT INTO User (username, email, password_hash) VALUES
+INSERT OR IGNORE INTO User (username, email, password_hash) VALUES
   ('elena', 'faveroelena@gmail.com', '$2b$10$eW8z5Z1a3f5c7d9e8f4aOe1Q0j5k6h7l8m9n0o1p2q3r4s5t6u7v8w9x0y'),
   ('mario', 'mariobros@gmail.com', '$2b$10$h7l8m9n0o1p2q3r4s5t6u7v8w9x0y1a2b3c4d5e6f7g8h9i0j1k2l3m4n5');
 
 
-INSERT INTO Card (description, image_url, bad_luck_index) VALUES
+INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
   ('You slip on a wet hotel floor', '/images/slip.jpg', 1.0),
   ('Mosquitoes bite you all night', '/images/mosquito.jpg', 2.5),
   ('The beach is closed for maintenance', '/images/beach_closed.jpg', 4.0),
@@ -89,4 +91,4 @@ INSERT INTO Card (description, image_url, bad_luck_index) VALUES
   ('Your rental car is stolen', '/images/car_stolen.jpg', 85.0),
   ('You lose your wallet at the airport', '/images/theft_airport.jpg', 85.5),
   ('You break a leg hiking a mountain', '/images/broken_leg.jpg', 90.0),
-  ('you get attacked at night in a city far from the hotel', '/images/attack.jpg', 100.0);
+  ('you get stabbed by a criminal', '/images/stab.jpg', 100.0);

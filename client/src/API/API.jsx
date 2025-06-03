@@ -26,9 +26,9 @@ export async function getThreeRandomCards() {
         const response = await fetch(`${URI}/cards/random/3`);
         if (response.ok) {
             const cards = await response.json();
-            return cards.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));
+            return cards/*.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));*/
         } else {
-            throw new Error(error);
+            throw new Error("API error: " + response.status);
         }
     } catch (error) {
         throw new Error("Network error in getting three random cards: " + error);
