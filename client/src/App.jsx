@@ -27,7 +27,7 @@ function App() {
         const newTableCard = await getRandomCardExcluding(excludeIds);
         console.log("[App] New table card:", newTableCard);
 
-        setCards(initialCards);
+        setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
         setTableCard(newTableCard);
         setError(null);
       } catch (err) {
@@ -39,12 +39,23 @@ function App() {
 
   }, []);
 
+  function handleIntervalClick(startIndex, endIndex) {
+    const startValue = cards[startIndex]?.bad_luck_index ?? -Infinity;
+    const endValue = cards[endIndex]?.bad_luck_index ?? Infinity;
+    const tableValue = tableCard.bad_luck_index;
+
+    const inCorrectInterval = tableValue > startValue && tableValue < endValue;
+
+    nextTurn(inCorrectInterval);
+  }
+
 
   // Funzione che gestisce la scelta della carta sul tavolo
   async function nextTurn(takeCard) {
     try {
       const updatedCards = takeCard ? [...cards, tableCard] : [...cards];
-      setCards(updatedCards);
+      setCards(updatedCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+      console.log("[SECONDO ROUND] Updated cards:", updatedCards);
 
       const excludeIds = updatedCards.map(c => c.id);
       const newCard = await getRandomCardExcluding(excludeIds);
@@ -64,7 +75,7 @@ function App() {
           path="/api/round/start"
           element={
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
-              
+
               {tableCard && (
                 <div className="card" style={{ width: '12rem', height: '15rem' }}>
                   <img
@@ -80,7 +91,7 @@ function App() {
                 </div>
               )}
               <div className="d-flex justify-content-center gap-3 mt-4" style={{ width: '100%' }}>
-                <ListCards cards={cards} />
+                <ListCards cards={cards} onIntervalClick={handleIntervalClick}/>
               </div>
             </div>
           }

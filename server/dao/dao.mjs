@@ -1,7 +1,7 @@
 import { Card } from '../models/models.mjs';
 import db from '../database/db.mjs';
 
-
+// TODO: non funziona, ti sceglie carte che hai nella mano
 export const getRandomCardExcluding = (excludedIds) => {
   return new Promise((resolve, reject) => {
     const placeholders = excludedIds.map(() => '?').join(',');

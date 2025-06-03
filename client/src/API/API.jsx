@@ -22,6 +22,8 @@ export async function getRandomCardExcluding(excludeIds = []) {
 
 
 
+
+
 // get 3 cards randomly
 export async function getThreeRandomCards() {
     try {
