@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { getRandomCard, getThreeRandomCards } from './dao/dao.mjs';
+import { getRandomCard, getThreeRandomCards, /*getRandomCardExcluding*/ } from './dao/dao.mjs';
 
 // init express
 const app = new express();
@@ -17,19 +17,24 @@ app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
 });
 
-
-
 /* ROUTES */
 
+
+
+
+app.get('/api/round/start', (req, res) => {
+  console.log("[INDEX] /api/round/start route called");
+  getThreeRandomCards()
+    .then(cards => res.json(cards))
+    .catch(err => res.status(500).json({ error: 'Failed to fetch 3 random cards' }));
+});
+
+
+
+///////
 // GET /api/cards/random
 app.get('/api/cards/random', (req, res) => {
   getRandomCard()
   .then(cards => res.json(cards))
   .catch(err => res.status(500).json({ error: 'Failed to fetch the new card' }));
-});
-
-app.get('/api/cards/random/3', (req, res) => {
-  getThreeRandomCards()
-    .then(cards => res.json(cards))
-    .catch(err => res.status(500).json({ error: 'Failed to fetch 3 random cards' }));
 });

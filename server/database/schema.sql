@@ -91,4 +91,4 @@ INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
   ('Your rental car is stolen', '/images/car_stolen.jpg', 85.0),
   ('You lose your wallet at the airport', '/images/theft_airport.jpg', 85.5),
   ('You break a leg hiking a mountain', '/images/broken_leg.jpg', 90.0),
-  ('you get stabbed by a criminal', '/images/stab.jpg', 100.0);
+  ('you get attacked at night in a city far from the hotel', '/images/attack.jpg', 100.0);

@@ -1,6 +1,6 @@
 .small-card {
-  width: 12rem;
-  height: 18rem; /* altezza fissa */
+  width: 13rem;
+  height: 11rem; /* altezza fissa */
   background-color: #cceeff;
   border: 1px solid #007bff;
   border-radius: 8px;
@@ -10,7 +10,7 @@
 }
 
 .small-card img {
-  height: 14rem;         /* fissa l’altezza dell'immagine */
+  height: 12rem;         /* fissa l’altezza dell'immagine */
   width: 100%;          /* riempi tutta la larghezza */
   object-fit: cover;    /* ritaglia e centra */
 }

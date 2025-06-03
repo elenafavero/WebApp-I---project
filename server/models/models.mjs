@@ -14,17 +14,7 @@ class Card {
     }
 }
 
-/*
-class Round {
-    constructor(id, gameId, card_id) {
-        // this.id = id;
-        this.gameId = gameId;
-        this.card_id = card_id; // ID della carta giocata in questo round
-        this.won = false; // Indica se il round è stato vinto
-        // this.roundNumber = roundNumber; // Numero del round, se necessario
-    }
-}
-*/
+
 
 
 class Game {
