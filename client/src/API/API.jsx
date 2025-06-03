@@ -3,11 +3,11 @@ import { User, Card, Game } from "../../../server/models/models.mjs";
 const URI = "http://localhost:3001/api"
 
 
-/*
-export async function getRandomCardExcluding(excludeIds = [], round_number) {
+
+export async function getRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
-        const response = await fetch(`${URI}/round/${round_number}${queryString}`);
+        const response = await fetch(`${URI}/round/exclude${queryString}`);
         if (response.ok) {
             const card = await response.json();
             return new Card(card.description, card.imageUrl, card.bad_luck_index);
@@ -18,13 +18,12 @@ export async function getRandomCardExcluding(excludeIds = [], round_number) {
         throw new Error("Network error: " + error.message);
     }
 }
-*/
+
 
 
 
 // get 3 cards randomly
 export async function getThreeRandomCards() {
-    console.log("[API] getThreeRandomCards called");
     try {
         const response = await fetch(`${URI}/round/start`);
         if (response.ok) {

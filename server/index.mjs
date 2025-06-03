@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { getRandomCard, getThreeRandomCards, /*getRandomCardExcluding*/ } from './dao/dao.mjs';
+import { getRandomCard, getThreeRandomCards, getRandomCardExcluding } from './dao/dao.mjs';
 
 // init express
 const app = new express();
@@ -19,7 +19,14 @@ app.listen(port, () => {
 
 /* ROUTES */
 
-
+app.get('/api/round/exclude', (req, res) => {
+  console.log("[INDEX] /api/round/exclude route called");
+  const excludeIds = (req.query.exclude || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+  
+  getRandomCardExcluding(excludeIds)
+    .then(card => res.json(card))
+    .catch(err => res.status(500).json({ error: 'Failed to fetch a random card excluding specified IDs' }));
+});
 
 
 app.get('/api/round/start', (req, res) => {

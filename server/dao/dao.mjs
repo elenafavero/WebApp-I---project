@@ -1,13 +1,13 @@
 import { Card } from '../models/models.mjs';
 import db from '../database/db.mjs';
 
-/*
+
 export const getRandomCardExcluding = (excludedIds) => {
   return new Promise((resolve, reject) => {
     const placeholders = excludedIds.map(() => '?').join(',');
     const sql = `
       SELECT * FROM Card 
-      WHERE id NOT IN (${placeholders})
+      WHERE bad_luck_index NOT IN (${placeholders})
       ORDER BY RANDOM() 
       LIMIT 1`;
 
@@ -19,7 +19,7 @@ export const getRandomCardExcluding = (excludedIds) => {
     });
   });
 };
-*/
+
 
 
 
