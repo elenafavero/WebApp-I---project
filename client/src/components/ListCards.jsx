@@ -15,16 +15,16 @@ function ListCards(props) { // cards
             }}
         >
             {cards.map((card, index) => (
-                <div key={index} className="card" style={{ width: '15rem', height: '22rem' }}>
+                <div key={index} className="card" style={{ width: '12rem', height: '15rem' }}>
                     <img
                         src={card.imageUrl}
                         className="card-img-top"
                         alt={card.description}
-                        style={{ height: '70%', objectFit: 'cover' }}
+                        style={{ height: '55%', objectFit: 'cover' }}
                     />
                     <div className="card-body d-flex flex-column justify-content-between">
-                        <p className="card-text">{card.description}</p>
-                        <p className="card-text text-muted">Bad Luck Index: {card.bad_luck_index}</p>
+                        <p className="card-text" style={{ fontSize: '0.80rem' }}>{card.description}</p>
+                        <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {card.bad_luck_index}</p>
                     </div>
                 </div>
             ))}
