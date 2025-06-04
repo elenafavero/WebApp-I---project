@@ -2,6 +2,9 @@ import { useEffect, useState, useRef } from 'react';
 import { getRandomCard, getThreeRandomCards, getRandomCardExcluding } from './API/API';
 import { Routes, Route, BrowserRouter, useNavigate } from 'react-router';
 import ListCards from './components/ListCards';
+import Welcome from './components/Welcome';
+import NewCard from './components/NewCard';
+import ShowResult from './components/ShowResult';
 import { Card } from '../../server/models/models.mjs';
 import Header from './components/Header'
 import './App.css';
@@ -118,8 +121,33 @@ function App() {
     }
   }
 
+  useEffect(() => {
+    if (gameOver === -1 || gameOver === 1) {
+      navigate('/game/result');
+    }
+  }, [gameOver, navigate]);
+
   if (error) return <div className="alert alert-danger mt-4">{error}</div>;
 
+
+  const resetGame = async () => {
+    setCards([]);
+    setTableCard(null);
+    setRound(-1);
+    setCorrectGuesses(0);
+    setWrongGuesses(0);
+    setGameOver(0);
+    setLastGuessCorrect(null);
+    setRoundHistory([]);
+    hasInitialized.current = false; // Resetta l'inizializzazione
+
+    const initialCards = await getThreeRandomCards();
+    const excludeIds = initialCards.map(c => c.bad_luck_index);
+    const newTableCard = await getRandomCardExcluding(excludeIds);
+
+    setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+    setTableCard(newTableCard);
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw' }}>
@@ -128,67 +156,31 @@ function App() {
           path="/"
           element={<Header />}
         >
+
           {/* Home page: welcome and start game button */}
-          <Route
-            path="home"
-            element = {
-              <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
-                <h1 className="mb-4">Welcome to Stuff Happens!</h1>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => navigate('/api/round/start')}
-                >
-                  Start New Game
-                </button>
-              </div>
-            }
-          />
+          <Route index element={<Welcome />} />
 
           <Route
             path="api/round/start"
-            // TODO: sposta tutta sta roba in un componente a parte
             element={
-              <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
-
-                {tableCard && (
-                  <div className="card" style={{ width: '12rem', height: '15rem' }}>
-                    <img
-                      src={tableCard.imageUrl}
-                      className="card-img-top"
-                      alt="Carta"
-                      style={{ height: '55%', objectFit: 'cover' }}
-                    />
-                    <div className="card-body d-flex flex-column justify-content-between" style={{ padding: '0.4rem' }}>
-                      <p className="card-text" style={{ fontSize: '0.80rem' }}>{tableCard.description}</p>
-                      <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {tableCard.bad_luck_index}</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* QUI MOSTRI IL MESSAGGIO DI VITTORIA/SCONFITTA */}
-                {gameOver === -1 && (
-                  <div className="alert alert-danger mt-3" role="alert">
-                    ❌ You lost!
-                  </div>
-                )}
-
-                {gameOver === 1 && (
-                  <div className="alert alert-success mt-3" role="alert">
-                    🎉 You won!
-                  </div>
-                )}
-
-                <div className="d-flex justify-content-center gap-3 mt-4" style={{ width: '100%' }}>
-                  <ListCards cards={cards} onIntervalClick={handleIntervalClick} />
-                </div>
-              </div>
+              <>
+                <NewCard tableCard={tableCard} />
+                <ListCards cards={cards} onIntervalClick={handleIntervalClick} />
+              </>
             }
-
           />
+
+          <Route
+            path="game/result"
+            element={<ShowResult gameOver={gameOver} resetGame={resetGame} />}
+          />
+
+
+
         </Route>
 
       </Routes>
-    </div>
+    </div >
   );
 
 }
