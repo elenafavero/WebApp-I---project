@@ -14,3 +14,9 @@
   width: 100%;          /* riempi tutta la larghezza */
   object-fit: cover;    /* ritaglia e centra */
 }
+
+
+.fixed-width-accordion {
+  width: 600px; /* o qualsiasi larghezza desiderata */
+  margin: 0 auto; /* per centrarlo orizzontalmente, opzionale */
+}

@@ -20,7 +20,6 @@ app.listen(port, () => {
 /* ROUTES */
 
 app.get('/api/round/exclude', (req, res) => {
-  console.log("[INDEX] /api/round/exclude route called");
   const excludeIds = (req.query.exclude || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
   
   getRandomCardExcluding(excludeIds)
@@ -30,7 +29,6 @@ app.get('/api/round/exclude', (req, res) => {
 
 
 app.get('/api/round/start', (req, res) => {
-  console.log("[INDEX] /api/round/start route called");
   getThreeRandomCards()
     .then(cards => res.json(cards))
     .catch(err => res.status(500).json({ error: 'Failed to fetch 3 random cards' }));

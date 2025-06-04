@@ -1,5 +1,4 @@
 import { useNavigate, useLocation } from 'react-router'
-import React from 'react';
 
 function Welcome(props) {
     // Hook to navigate between routes

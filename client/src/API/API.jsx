@@ -5,7 +5,6 @@ const URI = "http://localhost:3001/api"
 
 
 export async function getRandomCardExcluding(excludeIds = []) {
-    console.log("[API] Exclude IDs:", excludeIds);
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
         const response = await fetch(`${URI}/round/exclude${queryString}`);
@@ -31,7 +30,6 @@ export async function getThreeRandomCards() {
         const response = await fetch(`${URI}/round/start`);
         if (response.ok) {
             const cards = await response.json();
-            console.log("[API] Cards:", cards);
             return cards.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));
         } else {
             throw new Error("API error: " + response.status);

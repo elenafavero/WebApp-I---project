@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { getRandomCard, getThreeRandomCards, getRandomCardExcluding } from './API/API';
-import { Routes, Route, BrowserRouter, useNavigate } from 'react-router';
+import { getThreeRandomCards, getRandomCardExcluding } from './API/API';
+import { Routes, Route, useNavigate, useLocation  } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
 import NewCard from './components/NewCard';
 import ShowResult from './components/ShowResult';
-import { Card } from '../../server/models/models.mjs';
+import Profile from './components/Profile';
 import Header from './components/Header'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -22,8 +22,10 @@ function App() {
   const [roundHistory, setRoundHistory] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
   const [waitForNextRound, setWaitForNextRound] = useState(false);
+  const [allGamesHistory, setAllGamesHistory] = useState([]);
 
   const navigate = useNavigate();
+  const location = useLocation();
   const hasInitialized = useRef(false);
 
   // avvio del gioco
@@ -35,9 +37,7 @@ function App() {
       try {
         const initialCards = await getThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
-        console.log("[APP] Initial Cards:", excludeIds);
         const newTableCard = await getRandomCardExcluding(excludeIds);
-        console.log("[APP] New Table Card:", newTableCard);
 
         setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
         setTableCard(newTableCard);
@@ -175,21 +175,42 @@ function App() {
 
 
   // ritardo di 2 secondi prima di navigare alla pagina dei risultati
+  // serve mettere: location.pathname === '/api/round/start' 
+  // -> altrimenti se dalla pagina /game/result vai a /profile, dopo 2 secondi ti avrebbe riportato di nuovo a /game/result
   useEffect(() => {
-    if (gameOver === -1 || gameOver === 1) {
+    if ((gameOver === -1 || gameOver === 1) && location.pathname === '/api/round/start') {
       const delay = setTimeout(() => {
         navigate('/game/result');
       }, 2000);
 
       return () => clearTimeout(delay);
     }
-  }, [gameOver, navigate]);
+  }, [gameOver, navigate, location]);
+
+
+  // Accumulare i dati di ogni game 
+  useEffect(() => {
+    if (gameOver !== 0) {
+      setAllGamesHistory(prev => [
+        ...prev,
+        {
+          date: new Date(),
+          rounds: roundHistory,
+          correctGuesses,
+          wrongGuesses,
+          result: gameOver === 1 ? 'won' : 'lost',
+        }
+      ]);
+    }
+  }, [gameOver]);
+
 
   if (error) return <div className="alert alert-danger mt-4">{error}</div>;
 
 
   // Reset del gioco dopo ogni game concluso
   const resetGame = async () => {
+
     setCards([]);
     setTableCard(null);
     setRound(-1);
@@ -237,6 +258,12 @@ function App() {
             path="game/result"
             element={<ShowResult gameOver={gameOver} resetGame={resetGame} />}
           />
+
+          <Route
+            path="profile"
+            element={<Profile allGamesHistory={allGamesHistory} />}
+          />
+
 
 
 
