@@ -46,19 +46,27 @@ function NewCard(props) {
             )}
 
             {/* Messaggio di correttezza dell'ultima mossa fatta*/}
-            {props.lastGuessCorrect !== null && props.gameOver === 0 &&  (
-                <div className="mt-3 d-flex flex-column align-items-center justify-content-center" style={{ textAlign: 'center' }}>
+            {props.lastGuessCorrect !== null && props.gameOver === 0 && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: '95px',
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 1000,
+                    }}
+                >
                     <span
                         className={`fw-bold ${props.lastGuessCorrect ? 'text-success' : 'text-danger'}`}
-                        style={{ fontSize: '1.1rem', position: 'fixed', top: '95px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}
+                        style={{ fontSize: '1.1rem' }}
                     >
                         {props.lastGuessCorrect ? '✅ Correct position!' : '❌ Wrong position'}
                     </span>
                 </div>
             )}
 
-            
-            
+
+
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
                 {tableCard && (
                     <div className="card" style={{ width: '12rem', height: '15rem' }}>
