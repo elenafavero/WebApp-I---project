@@ -15,7 +15,7 @@ function ListCards(props) { // cards
                     {/* Slot tra le carte */}
                     {index === 0 && (
                         <div
-                            onClick={() => onIntervalClick(-1, 0)}
+                            onClick={() => props.onIntervalClick(-1, 0)}
                             className="mx-1"
                             style={{ width: '20px', cursor: 'pointer' }}
                             title="Inserisci prima della prima carta"
