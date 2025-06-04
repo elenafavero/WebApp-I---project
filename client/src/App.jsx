@@ -35,7 +35,9 @@ function App() {
       try {
         const initialCards = await getThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
+        console.log("[APP] Initial Cards:", excludeIds);
         const newTableCard = await getRandomCardExcluding(excludeIds);
+        console.log("[APP] New Table Card:", newTableCard);
 
         setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
         setTableCard(newTableCard);
@@ -79,18 +81,16 @@ function App() {
     };
   }, [tableCard, gameOver]);
 
+
+
   useEffect(() => {
     if (timeLeft === 0 && gameOver === 0 && !waitForNextRound) {
       handleGuess(false);
     }
   }, [timeLeft, gameOver]);
 
-  useEffect(() => {
-    console.log("⏱️ Tempo aggiornato:", timeLeft);
-  }, [timeLeft]);
 
-
-
+  // return: true if the choosen interval is correct, false otherwise
   function handleIntervalClick(startIndex, endIndex) {
     const startValue = cards[startIndex]?.bad_luck_index ?? -Infinity;
     const endValue = cards[endIndex]?.bad_luck_index ?? Infinity;
@@ -101,6 +101,7 @@ function App() {
     handleGuess(inCorrectInterval);
   }
 
+  // stampe
   useEffect(() => {
     console.log("🟢 Round:", round);
     console.log("✅ Correct:", correctGuesses);
@@ -124,6 +125,7 @@ function App() {
 
     setLastGuessCorrect(takeCard);
 
+    // aggiungi la carta alla storia del game
     setRoundHistory(prev => [
       ...prev,
       {
@@ -164,7 +166,7 @@ function App() {
   async function proceedToNextRound() {
     if (gameOver !== 0) return;
 
-    const excludeIds = cards.map(c => c.id).concat(tableCard.id);
+    const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
     const newCard = await getRandomCardExcluding(excludeIds);
 
     setTableCard(newCard);
@@ -172,6 +174,7 @@ function App() {
   }
 
 
+  // ritardo di 2 secondi prima di navigare alla pagina dei risultati
   useEffect(() => {
     if (gameOver === -1 || gameOver === 1) {
       const delay = setTimeout(() => {
@@ -185,6 +188,7 @@ function App() {
   if (error) return <div className="alert alert-danger mt-4">{error}</div>;
 
 
+  // Reset del gioco dopo ogni game concluso
   const resetGame = async () => {
     setCards([]);
     setTableCard(null);

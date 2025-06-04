@@ -5,6 +5,7 @@ const URI = "http://localhost:3001/api"
 
 
 export async function getRandomCardExcluding(excludeIds = []) {
+    console.log("[API] Exclude IDs:", excludeIds);
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
         const response = await fetch(`${URI}/round/exclude${queryString}`);
