@@ -200,7 +200,7 @@ function App() {
           path="/"
           element={
 
-            <Header timeLeft={timeLeft} gameOver={gameOver} tableCard={tableCard} />
+            <Header />
 
           }
         >
@@ -212,7 +212,7 @@ function App() {
             path="api/round/start"
             element={
               <>
-                <NewCard tableCard={tableCard} />
+                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} />
                 <ListCards cards={cards} onIntervalClick={handleIntervalClick} />
               </>
             }
