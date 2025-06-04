@@ -3,6 +3,7 @@ import { getRandomCard, getThreeRandomCards, getRandomCardExcluding } from './AP
 import { Routes, Route, BrowserRouter, useNavigate } from 'react-router';
 import ListCards from './components/ListCards';
 import { Card } from '../../server/models/models.mjs';
+import Header from './components/Header'
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -72,30 +73,39 @@ function App() {
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw' }}>
       <Routes>
         <Route
-          path="/api/round/start"
-          element={
-            <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
+          path="/"
+          element={<Header />}
+        >
 
-              {tableCard && (
-                <div className="card" style={{ width: '12rem', height: '15rem' }}>
-                  <img
-                    src={tableCard.imageUrl}
-                    className="card-img-top"
-                    alt="Carta"
-                    style={{ height: '55%', objectFit: 'cover' }}
-                  />
-                  <div className="card-body d-flex flex-column justify-content-between" style={{ padding: '0.4rem' }}>
-                    <p className="card-text" style={{ fontSize: '0.80rem' }}>{tableCard.description}</p>
-                    <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {tableCard.bad_luck_index}</p>
+          <Route
+            path="api/round/start"
+            // TODO: sposta tutta sta roba in un componente a parte
+            element={
+              <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
+
+                {tableCard && (
+                  <div className="card" style={{ width: '12rem', height: '15rem' }}>
+                    <img
+                      src={tableCard.imageUrl}
+                      className="card-img-top"
+                      alt="Carta"
+                      style={{ height: '55%', objectFit: 'cover' }}
+                    />
+                    <div className="card-body d-flex flex-column justify-content-between" style={{ padding: '0.4rem' }}>
+                      <p className="card-text" style={{ fontSize: '0.80rem' }}>{tableCard.description}</p>
+                      <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {tableCard.bad_luck_index}</p>
+                    </div>
                   </div>
+                )}
+                <div className="d-flex justify-content-center gap-3 mt-4" style={{ width: '100%' }}>
+                  <ListCards cards={cards} onIntervalClick={handleIntervalClick} />
                 </div>
-              )}
-              <div className="d-flex justify-content-center gap-3 mt-4" style={{ width: '100%' }}>
-                <ListCards cards={cards} onIntervalClick={handleIntervalClick}/>
               </div>
-            </div>
-          }
-        />
+            }
+
+          />
+        </Route>
+
       </Routes>
     </div>
   );
