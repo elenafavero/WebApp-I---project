@@ -19,8 +19,9 @@ function ListCards(props) { // cards
                             className="mx-1 d-flex align-items-center"
                             style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
                             title="Inserisci prima della prima carta"
+                            
                         >
-                            <div style={{ height: '100px', width: '100%', backgroundColor: '#ddd', borderRadius: '4px', margin: 'auto' }} />
+                            <div className="card-slot-inner">+</div>
                         </div>
                     )}
 
@@ -45,21 +46,21 @@ function ListCards(props) { // cards
                         style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
                         title="Inserisci tra le carte"
                     >
-                        <div style={{ height: '100px', width: '100%', backgroundColor: '#ddd', borderRadius: '4px', margin: 'auto' }} />
+                        <div className="card-slot-inner">+</div>
                     </div>
                 </React.Fragment>
             ))}
 
             {/* Pulsante a destra */}
             {props.waitForNextRound && props.gameOver === 0 && (
-                <div className="ms-4" style={{ 
+                <div className="ms-4" style={{
                     position: 'absolute',
                     right: '70px',
                     top: '50%',
                     transform: 'translateY(-50%)'
                 }}>
-                    <button 
-                        className="btn btn-primary" 
+                    <button
+                        className="btn btn-primary"
                         onClick={props.proceedToNextRound}
                         style={{
                             padding: '10px 20px',

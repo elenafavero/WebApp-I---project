@@ -231,7 +231,7 @@ function App() {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw' }}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f4f7fa'}}>
 
       <Routes>
         <Route

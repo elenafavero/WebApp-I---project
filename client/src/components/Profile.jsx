@@ -1,34 +1,37 @@
 import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
+import Image from 'react-bootstrap/Image';
+import '../App.css'; 
 
 
 function Profile({ allGamesHistory }) {
-    return (
-        <Accordion className="fixed-width-accordion">
-            <Accordion.Item eventKey="0">
-                <Accordion.Header>Accordion Item #1</Accordion.Header>
-                <Accordion.Body>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
-                </Accordion.Body>
-            </Accordion.Item>
-            <Accordion.Item eventKey="1">
-                <Accordion.Header>Accordion Item #2</Accordion.Header>
-                <Accordion.Body>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-                    minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-                    aliquip ex ea commodo consequat. Duis aute irure dolor in
-                    reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-                    culpa qui officia deserunt mollit anim id est laborum.
-                </Accordion.Body>
-            </Accordion.Item>
-        </Accordion>
-    );
+  return (
+    <Accordion className="fixed-width-accordion" defaultActiveKey="0">
+      {allGamesHistory.map((game, index) => (
+        <Accordion.Item eventKey={index.toString()} key={index}>
+          <Accordion.Header>
+            Game #{index + 1} – {game.result.toUpperCase()} – {game.correctGuesses} ✓ / {game.wrongGuesses}✗
+          </Accordion.Header>
+          <Accordion.Body>
+            {game.rounds.map((round, i) => (
+              <Card key={i} className="mb-3">
+                <Card.Body className="d-flex gap-3 align-items-center">
+                  <Image src={round.card.imageUrl} alt={round.card.name} rounded style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
+                  <div>
+                    <h5>{round.card.name}</h5>
+                    <p>{round.card.description}</p>
+                    <p className={`mb-0 ${round.result === 'won' ? 'text-success' : 'text-danger'}`}>
+                      Round {round.round + 1}: {round.result === 'won' ? 'Correct ✅' : 'Wrong ❌'}
+                    </p>
+                  </div>
+                </Card.Body>
+              </Card>
+            ))}
+          </Accordion.Body>
+        </Accordion.Item>
+      ))}
+    </Accordion>
+  );
 }
+
 export default Profile;
