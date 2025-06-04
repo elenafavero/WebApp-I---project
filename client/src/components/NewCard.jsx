@@ -18,6 +18,26 @@ function NewCard(props) {
             }}>
                 {"\u23F3"} Tempo rimasto: <strong>{props.timeLeft}</strong> secondi
             </div>
+
+            {(props.gameOver === 1 || props.gameOver === -1) && (
+                <div
+                    className="d-flex flex-column align-items-center"
+                    style={{
+                        position: 'fixed',
+                        top: '80px', // più in alto rispetto a prima
+                        left: '50%',
+                        transform: 'translateX(-50%)',
+                        zIndex: 1100
+                    }}
+                >
+                    <div
+                        className="spinner-border text-secondary"
+                        role="status"
+                        style={{ width: '1.5rem', height: '1.5rem' }}
+                    />
+                    <p className="mt-2 text-muted" style={{ fontSize: '0.85rem' }}>Waiting for result...</p>
+                </div>
+            )}
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
                 {tableCard && (
                     <div className="card" style={{ width: '12rem', height: '15rem' }}>

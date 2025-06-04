@@ -49,6 +49,27 @@ function ListCards(props) { // cards
                     </div>
                 </React.Fragment>
             ))}
+
+            {/* Pulsante a destra */}
+            {props.waitForNextRound && props.gameOver === 0 && (
+                <div className="ms-4" style={{ 
+                    position: 'absolute',
+                    right: '70px',
+                    top: '50%',
+                    transform: 'translateY(-50%)'
+                }}>
+                    <button 
+                        className="btn btn-primary" 
+                        onClick={props.proceedToNextRound}
+                        style={{
+                            padding: '10px 20px',
+                            fontSize: '1.1rem'
+                        }}
+                    >
+                        Next Round
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

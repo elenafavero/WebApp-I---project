@@ -21,6 +21,7 @@ function App() {
   const [lastGuessCorrect, setLastGuessCorrect] = useState(null); // true/false/null
   const [roundHistory, setRoundHistory] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [waitForNextRound, setWaitForNextRound] = useState(false);
 
   const navigate = useNavigate();
   const hasInitialized = useRef(false);
@@ -79,8 +80,8 @@ function App() {
   }, [tableCard, gameOver]);
 
   useEffect(() => {
-    if (timeLeft === 0 && gameOver === 0) {
-      nextTurn(false); // eseguito fuori dal setState
+    if (timeLeft === 0 && gameOver === 0 && !waitForNextRound) {
+      handleGuess(false);
     }
   }, [timeLeft, gameOver]);
 
@@ -97,7 +98,7 @@ function App() {
 
     const inCorrectInterval = tableValue > startValue && tableValue < endValue;
 
-    nextTurn(inCorrectInterval);
+    handleGuess(inCorrectInterval);
   }
 
   useEffect(() => {
@@ -111,14 +112,18 @@ function App() {
   }, [round, correctGuesses, wrongGuesses, lastGuessCorrect, roundHistory]);
 
 
-  async function nextTurn(takeCard) {
-    if (gameOver != 0) return;
 
-    // Salviamo subito se la scelta è corretta, così il render userà il valore aggiornato
+  function handleGuess(takeCard) {
+    if (gameOver !== 0 || waitForNextRound) return;
+
+    // FERMA IL TIMER NON APPENA SI INSERISCE LA CARTA
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+
     setLastGuessCorrect(takeCard);
 
-
-    // Salviamo il round history immediatamente
     setRoundHistory(prev => [
       ...prev,
       {
@@ -128,10 +133,8 @@ function App() {
       }
     ]);
 
-    // Aggiorniamo round
     setRound(prev => prev + 1);
 
-    // Se scelta corretta
     if (takeCard) {
       const newCards = [...cards, tableCard];
       const sortedCards = newCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index);
@@ -140,33 +143,42 @@ function App() {
       setCorrectGuesses(prev => {
         const newCorrect = prev + 1;
         if (newCorrect === 3) {
-          setGameOver(1); // Game Over: hai vinto
+          setGameOver(1); // Hai vinto
         }
         return newCorrect;
       });
-
-      const excludeIds = sortedCards.map(c => c.id);
-      const newCard = await getRandomCardExcluding(excludeIds);
-      setTableCard(newCard);
     } else {
-      // scelta errata: NON aggiungo la carta
       setWrongGuesses(prev => {
         const newWrong = prev + 1;
         if (newWrong >= 3) {
-          setGameOver(-1); // Game Over: hai perso
+          setGameOver(-1); // Hai perso
         }
         return newWrong;
       });
-
-      const excludeIds = cards.map(c => c.id).concat(tableCard.id);
-      const newCard = await getRandomCardExcluding(excludeIds);
-      setTableCard(newCard);
     }
+
+    setWaitForNextRound(true); // aspetta il click prima di continuare
   }
+
+
+  async function proceedToNextRound() {
+    if (gameOver !== 0) return;
+
+    const excludeIds = cards.map(c => c.id).concat(tableCard.id);
+    const newCard = await getRandomCardExcluding(excludeIds);
+
+    setTableCard(newCard);
+    setWaitForNextRound(false);
+  }
+
 
   useEffect(() => {
     if (gameOver === -1 || gameOver === 1) {
-      navigate('/game/result');
+      const delay = setTimeout(() => {
+        navigate('/game/result');
+      }, 2000);
+
+      return () => clearTimeout(delay);
     }
   }, [gameOver, navigate]);
 
@@ -182,6 +194,7 @@ function App() {
     setGameOver(0);
     setLastGuessCorrect(null);
     setRoundHistory([]);
+    setWaitForNextRound(false);
     hasInitialized.current = false; // Resetta l'inizializzazione
 
     const initialCards = await getThreeRandomCards();
@@ -198,22 +211,20 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
-
-            <Header />
-
-          }
+          element={<Header />}
         >
 
           {/* Home page: welcome and start game button */}
           <Route index element={<Welcome />} />
+
 
           <Route
             path="api/round/start"
             element={
               <>
                 <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} />
-                <ListCards cards={cards} onIntervalClick={handleIntervalClick} />
+                <ListCards cards={cards} onIntervalClick={handleIntervalClick} waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound}
+                  gameOver={gameOver} />
               </>
             }
           />
