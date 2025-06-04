@@ -20,6 +20,7 @@ function App() {
   const [gameOver, setGameOver] = useState(0); // 0 = in corso, 1 = vinto, -1 = perso
   const [lastGuessCorrect, setLastGuessCorrect] = useState(null); // true/false/null
   const [roundHistory, setRoundHistory] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   const navigate = useNavigate();
   const hasInitialized = useRef(false);
@@ -46,6 +47,48 @@ function App() {
     startGame(); // esegui subito questa funzione asincrona" quando il componente si monta.
 
   }, []);
+
+  const timerRef = useRef(null);
+
+
+  // timer
+  useEffect(() => {
+    if (!tableCard || gameOver !== 0) return;
+
+    setTimeLeft(30);
+
+    if (timerRef.current) clearInterval(timerRef.current);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, [tableCard, gameOver]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && gameOver === 0) {
+      nextTurn(false); // eseguito fuori dal setState
+    }
+  }, [timeLeft, gameOver]);
+
+  useEffect(() => {
+    console.log("⏱️ Tempo aggiornato:", timeLeft);
+  }, [timeLeft]);
+
+
 
   function handleIntervalClick(startIndex, endIndex) {
     const startValue = cards[startIndex]?.bad_luck_index ?? -Infinity;
@@ -151,10 +194,15 @@ function App() {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw' }}>
+
       <Routes>
         <Route
           path="/"
-          element={<Header />}
+          element={
+
+            <Header timeLeft={timeLeft} gameOver={gameOver} tableCard={tableCard} />
+
+          }
         >
 
           {/* Home page: welcome and start game button */}
