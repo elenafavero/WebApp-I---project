@@ -19,6 +19,7 @@ function NewCard(props) {
                 {"\u23F3"} Tempo rimasto: <strong>{props.timeLeft}</strong> secondi
             </div>
 
+            {/* Loading spinner */}
             {(props.gameOver === 1 || props.gameOver === -1) && (
                 <div
                     className="d-flex flex-column align-items-center"
@@ -27,7 +28,12 @@ function NewCard(props) {
                         top: '80px', // più in alto rispetto a prima
                         left: '50%',
                         transform: 'translateX(-50%)',
-                        zIndex: 1100
+                        zIndex: 1100,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center'
                     }}
                 >
                     <div
@@ -35,9 +41,24 @@ function NewCard(props) {
                         role="status"
                         style={{ width: '1.5rem', height: '1.5rem' }}
                     />
-                    <p className="mt-2 text-muted" style={{ fontSize: '0.85rem' }}>Waiting for result...</p>
+                    <p className="mt-2 text-muted" style={{ fontSize: '0.85rem', textAlign: 'center' }}>Waiting for result...</p>
                 </div>
             )}
+
+            {/* Messaggio di correttezza dell'ultima mossa fatta*/}
+            {props.lastGuessCorrect !== null && props.gameOver === 0 &&  (
+                <div className="mt-3 d-flex flex-column align-items-center justify-content-center" style={{ textAlign: 'center' }}>
+                    <span
+                        className={`fw-bold ${props.lastGuessCorrect ? 'text-success' : 'text-danger'}`}
+                        style={{ fontSize: '1.1rem', position: 'fixed', top: '95px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}
+                    >
+                        {props.lastGuessCorrect ? '✅ Correct position!' : '❌ Wrong position'}
+                    </span>
+                </div>
+            )}
+
+            
+            
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
                 {tableCard && (
                     <div className="card" style={{ width: '12rem', height: '15rem' }}>

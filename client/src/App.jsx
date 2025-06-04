@@ -165,6 +165,7 @@ function App() {
 
   async function proceedToNextRound() {
     if (gameOver !== 0) return;
+    setLastGuessCorrect(null);
 
     const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
     const newCard = await getRandomCardExcluding(excludeIds);
@@ -247,7 +248,7 @@ function App() {
             path="api/round/start"
             element={
               <>
-                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} />
+                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect}/>
                 <ListCards cards={cards} onIntervalClick={handleIntervalClick} waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound}
                   gameOver={gameOver} />
               </>

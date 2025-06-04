@@ -3,6 +3,7 @@ import Card from 'react-bootstrap/Card';
 import Image from 'react-bootstrap/Image';
 import '../App.css'; 
 
+// TODO: inserisci anche le 3 carte iniziali?
 
 function Profile({ allGamesHistory }) {
   return (
