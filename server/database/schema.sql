@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS User (
   id INTEGER PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   email TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL
+  salt TEXT NOT NULL,
+  saltedPassword TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS Card (
@@ -14,18 +15,6 @@ CREATE TABLE IF NOT EXISTS Card (
   bad_luck_index REAL UNIQUE NOT NULL
 );
 
-/*
-CREATE TABLE IF NOT EXISTS Round (
-  id INTEGER PRIMARY KEY,
-  game_id INTEGER NOT NULL,
-  card_id INTEGER NOT NULL,
-  -- round_number INTEGER,
-  won BOOLEAN,
-  guessed_position INTEGER,
-  FOREIGN KEY (game_id) REFERENCES Game(id),
-  FOREIGN KEY (card_id) REFERENCES Card(id)
-);
-*/
 
 CREATE TABLE IF NOT EXISTS Game (
   id INTEGER PRIMARY KEY,
@@ -36,9 +25,9 @@ CREATE TABLE IF NOT EXISTS Game (
   FOREIGN KEY (user_id) REFERENCES User(id)
 );
 
-INSERT OR IGNORE INTO User (username, email, password_hash) VALUES
-  ('elena', 'faveroelena@gmail.com', '$2b$10$eW8z5Z1a3f5c7d9e8f4aOe1Q0j5k6h7l8m9n0o1p2q3r4s5t6u7v8w9x0y'),
-  ('mario', 'mariobros@gmail.com', '$2b$10$h7l8m9n0o1p2q3r4s5t6u7v8w9x0y1a2b3c4d5e6f7g8h9i0j1k2l3m4n5');
+INSERT OR IGNORE INTO User (username, email, salt, saltedPassword) VALUES
+  ('Elena', 'faveroelena2@gmail.com', 'cc5d394129172ad6', 'a6bf999e5837a06c55ec0273a4b581090201e63f9ec1ee984fe58aeafa6545e6'),
+  ('Mario', 'mariobros@gmail.com', 'd3e4e8f2767c5a2f', '46a1906e14c17bd134fc3cbcdd615586cb2f36996218b88ba1680d34ba4ecc69');
 
 
 INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
