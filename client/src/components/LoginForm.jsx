@@ -1,46 +1,66 @@
 import { useActionState } from "react";
-import { Form, Button, Container } from "react-bootstrap";
+import { Form, Button, Container, Alert } from "react-bootstrap";
 import { Link } from "react-router";
 
-
-
 function LoginForm(props) {
-    const [state, formAction] = useActionState(submitCredentials, { email: '', password: '' })
+  const [state, formAction] = useActionState(submitCredentials, { email: '', password: '' });
 
-    async function submitCredentials(prevData, formData) {
-        const credentials = {
-            email: formData.get('email'),
-            password: formData.get('password')
-        }
-        try {
-            await props.handleLogin(credentials);
-            return { success: true }
-        }
-        catch (error) {
-            return { error: 'Invalid credentials' };
-        }
+  async function submitCredentials(prevData, formData) {
+    const credentials = {
+      email: formData.get('email'),
+      password: formData.get('password')
+    };
+    try {
+      await props.handleLogin(credentials);
+      return { success: true };
+    } catch (error) {
+      return { error: 'Invalid credentials' };
     }
+  }
 
-    return <Container fluid>
-        <Form action={formAction}>
-            <Form.Group controlId="email">
-                <Form.Label>Email</Form.Label>
-                <Form.Control type='email' name="email" required />
-            </Form.Group>
+  return (
+    <Container
+      fluid="sm"
+      style={{ maxWidth: '400px', marginTop: '1rem', padding: '2rem', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#fafafa' }}
+    >
+      <h2 className="mb-4 text-center">Login</h2>
 
-            <Form.Group controlId='password'>
-                <Form.Label>Password</Form.Label>
-                <Form.Control type='password' name='password' required></Form.Control>
-            </Form.Group>
+      <Form action={formAction} noValidate>
+        <Form.Group controlId="email" className="mb-3">
+          <Form.Label>Email address</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            placeholder="Inserisci la tua email"
+            required
+            isInvalid={!!state.error}
+          />
+        </Form.Group>
 
-            {state.error && <p className="text-danger">{state.error}</p>}
+        <Form.Group controlId="password" className="mb-4">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            type="password"
+            name="password"
+            placeholder="Inserisci la password"
+            required
+            isInvalid={!!state.error}
+          />
+        </Form.Group>
 
-            <Link className="btn btn-secondary" to={'/'}>Cancel</Link>
-            <Button type='submit'>Login</Button>
-        </Form>
+        {state.error && <Alert variant="danger" className="text-center">{state.error}</Alert>}
 
-
+        <div className="d-flex justify-content-between">
+          <Link to="/" className="btn btn-outline-secondary">
+            Cancel
+          </Link>
+          <Button type="submit" variant="primary">
+            Login
+          </Button>
+        </div>
+      </Form>
     </Container>
+  );
 }
 
 export default LoginForm;

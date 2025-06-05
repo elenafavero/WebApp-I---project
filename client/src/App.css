@@ -56,3 +56,118 @@
   width: 1200px;
   margin: 2rem auto 0 auto;
 }
+
+/* Stile for: Welcome Page */
+.welcome-container {
+    padding: 40px 20px;
+    min-height: 80vh;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.welcome-title {
+    font-weight: 700;
+    font-size: 3rem;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1.5rem; /* circa mb-4 */
+}
+
+.highlight {
+    color: #ff7f50;
+}
+
+.welcome-subtitle {
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: #555;
+    margin-bottom: 3rem; /* circa mb-5 */
+}
+
+.welcome-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.welcome-btn-login {
+    min-width: 140px;
+    font-weight: 600;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.075); /* shadow-sm */
+}
+
+.welcome-btn-login:hover {
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.1);
+}
+
+.welcome-btn-demo {
+    min-width: 180px;
+    font-weight: 600;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.075);
+}
+
+.welcome-btn-demo:hover {
+    box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.1);
+}
+
+
+
+/* Stile for: Start Page */
+.start-container {
+  padding: 40px 20px;
+  min-height: 80vh;
+  color: #333;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.start-title {
+  font-weight: 700;
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.start-button {
+  min-width: 180px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+}
+
+.start-intro {
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #555;
+  max-width: 600px;
+  margin-bottom: 1rem;
+}
+
+.start-rules {
+  text-align: left;
+  max-width: 600px;
+  color: #444;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  padding-left: 20px;
+}
+
+.start-encouragement {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}

@@ -7,7 +7,9 @@ const URI = "http://localhost:3001/api"
 async function getRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
-        const response = await fetch(`${URI}/round/exclude${queryString}`);
+        const response = await fetch(`${URI}/round/exclude${queryString}`, {
+            credentials: 'include'
+        });
         if (response.ok) {
             const card = await response.json();
             return new Card(card.description, card.imageUrl, card.bad_luck_index);
@@ -27,7 +29,9 @@ async function getRandomCardExcluding(excludeIds = []) {
 // get 3 cards randomly
 async function getThreeRandomCards() {
     try {
-        const response = await fetch(`${URI}/round/start`);
+        const response = await fetch(`${URI}/round/start`, {
+            credentials: 'include'
+        });
         if (response.ok) {
             const cards = await response.json();
             return cards.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));
@@ -41,22 +45,25 @@ async function getThreeRandomCards() {
 
 
 async function logIn(credentials) {
-
+    console.log("[API] Logging in with credentials:", credentials);
     const bodyObject = {
         email: credentials.email,
         password: credentials.password
     }
-    const response = await fetch(URI + `/login`, {
+    console.log("[API] Body object for login:", bodyObject);
+    const response = await fetch(`${URI}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(bodyObject)
     })
     if (response.ok) {
+        console.log("[API] Login successful, fetching user data");
         const user = await response.json();
         return user;
 
     } else {
+        console.error("[API] Login failed with status:", response.status);
         const err = await response.text()
         throw err;
     }

@@ -8,6 +8,7 @@ import ShowResult from './components/Result';
 import Profile from './components/Profile';
 import Header from './components/Header'
 import LoginForm from './components/LoginForm';
+import StartPage from './components/StartPage';
 import { logIn, logout } from './API/API';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -35,7 +36,7 @@ function App() {
 
   // avvio del gioco
   useEffect(() => {
-    if (hasInitialized.current) return;
+    if (hasInitialized.current || location.pathname !== '/api/round/start') return;
     hasInitialized.current = true;
 
     async function startGame() {
@@ -52,9 +53,9 @@ function App() {
       }
     }
 
-    startGame(); // esegui subito questa funzione asincrona" quando il componente si monta.
+    startGame();
+  }, [location.pathname]);
 
-  }, []);
 
   const timerRef = useRef(null);
 
@@ -257,12 +258,17 @@ function App() {
           element={<Header />}
         >
 
-          {/* Home page: welcome and start game button */}
+          {/* Home page: welcome and choose version */}
           <Route index element={<Welcome />} />
 
-          <Route path="login" element={loggedIn ? <Navigate replace to='/' /> : <LoginForm handleLogin={handleLogin} />} />
+          {/* Login */}
+          <Route path="api/login" element={loggedIn ? <Navigate replace to='/api/start' /> : <LoginForm handleLogin={handleLogin} />} />
 
+          {/* Start page (+ rules)  */}
+          <Route path="api/start" element={<StartPage loggedIn={loggedIn} />} />
 
+          {/* Game starts */}
+          {/* TODO: cambia la route in start/round */}
           <Route
             path="api/round/start"
             element={
@@ -274,6 +280,7 @@ function App() {
             }
           />
 
+          {/* Game result (+ summary)*/}
           <Route
             path="game/result"
             element={<ShowResult gameOver={gameOver} resetGame={resetGame} />}
