@@ -4,7 +4,7 @@ const URI = "http://localhost:3001/api"
 
 
 
-export async function getRandomCardExcluding(excludeIds = []) {
+async function getRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
         const response = await fetch(`${URI}/round/exclude${queryString}`);
@@ -25,7 +25,7 @@ export async function getRandomCardExcluding(excludeIds = []) {
 
 
 // get 3 cards randomly
-export async function getThreeRandomCards() {
+async function getThreeRandomCards() {
     try {
         const response = await fetch(`${URI}/round/start`);
         if (response.ok) {
@@ -40,22 +40,50 @@ export async function getThreeRandomCards() {
 }
 
 
+async function logIn(credentials) {
 
-///////
+    const bodyObject = {
+        email: credentials.email,
+        password: credentials.password
+    }
+    const response = await fetch(URI + `/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(bodyObject)
+    })
+    if (response.ok) {
+        const user = await response.json();
+        return user;
 
-
-// get 1 card randomly
-export async function getRandomCard() {
-    try {
-        const response = await fetch(`${URI}/cards/random`);
-        if (response.ok) {
-            const card = await response.json();
-            return new Card(card.description, card.imageUrl, card.bad_luck_index);
-        }
-        else {
-            throw new Error(error);
-        }
-    } catch (error) {
-        throw new Error("Network error in getting a random card: " + error);
+    } else {
+        const err = await response.text()
+        throw err;
     }
 }
+
+
+async function logout() {
+    const response = await fetch(URI + `/logout`, {
+        method: 'POST',
+        credentials: 'include',
+    });
+    if (response.ok)
+        return null;
+}
+
+
+async function getCurrentUser() {
+  const res = await fetch(URI + '/session/current', {
+    credentials: 'include'
+  });
+
+  if (!res.ok) throw new Error("Not authenticated");
+  return res.json();
+}
+
+
+
+
+
+export {getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser};

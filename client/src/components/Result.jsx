@@ -36,7 +36,7 @@ function ShowResult(props) {
                         border: '1px solid #f5c6cb',
                     }}
                 >
-                    ❌ You lost!
+                    ❌ GAME OVER
                 </div>
             )}
             {props.gameOver === 1 && (
@@ -50,7 +50,7 @@ function ShowResult(props) {
                         border: '1px solid #c3e6cb',
                     }}
                 >
-                    🎉 You won!
+                    🎉 YOU WIN!
                 </div>
             )}
             {props.gameOver !== 0 && (

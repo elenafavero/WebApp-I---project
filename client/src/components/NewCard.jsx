@@ -1,4 +1,5 @@
 import React from 'react';
+import './Result.css';
 
 function NewCard(props) {
     const tableCard = props.tableCard;
@@ -45,23 +46,23 @@ function NewCard(props) {
                 </div>
             )}
 
+            {/* TODO: se timer expired e sbagli per quello, scrivi "timer expired" non wrogn position */}
+
             {/* Messaggio di correttezza dell'ultima mossa fatta*/}
             {props.lastGuessCorrect !== null && props.gameOver === 0 && (
                 <div
-                    style={{
-                        position: 'fixed',
-                        top: '95px',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        zIndex: 1000,
-                    }}
+                    className={`feedback-message ${props.lastGuessCorrect === true
+                            ? 'feedback-success'
+                            : props.lastGuessCorrect === 'timeout'
+                                ? 'feedback-timeout'
+                                : 'feedback-error'
+                        }`}
                 >
-                    <span
-                        className={`fw-bold ${props.lastGuessCorrect ? 'text-success' : 'text-danger'}`}
-                        style={{ fontSize: '1.1rem' }}
-                    >
-                        {props.lastGuessCorrect ? '✅ Correct position!' : '❌ Wrong position'}
-                    </span>
+                    {props.lastGuessCorrect === true
+                        ? 'Correct position!'
+                        : props.lastGuessCorrect === 'timeout'
+                            ? 'Timer expired...'
+                            : 'Wrong position'}
                 </div>
             )}
 

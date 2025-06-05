@@ -1,12 +1,14 @@
 import { useEffect, useState, useRef } from 'react';
 import { getThreeRandomCards, getRandomCardExcluding } from './API/API';
-import { Routes, Route, useNavigate, useLocation  } from 'react-router';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
 import NewCard from './components/NewCard';
-import ShowResult from './components/ShowResult';
+import ShowResult from './components/Result';
 import Profile from './components/Profile';
 import Header from './components/Header'
+import LoginForm from './components/LoginForm';
+import { logIn, logout } from './API/API';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -23,6 +25,9 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(30);
   const [waitForNextRound, setWaitForNextRound] = useState(false);
   const [allGamesHistory, setAllGamesHistory] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState(null); // già usata nel login/logout
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -56,7 +61,8 @@ function App() {
 
   // timer
   useEffect(() => {
-    if (!tableCard || gameOver !== 0) return;
+    const isGameScreen = location.pathname === '/api/round/start';
+    if (!isGameScreen || !tableCard || gameOver !== 0) return;
 
     setTimeLeft(30);
 
@@ -79,13 +85,13 @@ function App() {
         timerRef.current = null;
       }
     };
-  }, [tableCard, gameOver]);
+  }, [tableCard, gameOver, location.pathname]); // NOTA: location.pathname incluso qui
 
 
 
   useEffect(() => {
     if (timeLeft === 0 && gameOver === 0 && !waitForNextRound) {
-      handleGuess(false);
+      handleGuess(false, true);
     }
   }, [timeLeft, gameOver]);
 
@@ -101,20 +107,10 @@ function App() {
     handleGuess(inCorrectInterval);
   }
 
-  // stampe
-  useEffect(() => {
-    console.log("🟢 Round:", round);
-    console.log("✅ Correct:", correctGuesses);
-    console.log("❌ Wrong:", wrongGuesses);
-    console.log("🕹️ Last Guess:", lastGuessCorrect);
-    console.log("📜 History:", roundHistory);
-    if (round >= 0)
-      console.log("📜 card History:", roundHistory[round].card);
-  }, [round, correctGuesses, wrongGuesses, lastGuessCorrect, roundHistory]);
 
 
 
-  function handleGuess(takeCard) {
+  function handleGuess(takeCard, isTimeout = false) {
     if (gameOver !== 0 || waitForNextRound) return;
 
     // FERMA IL TIMER NON APPENA SI INSERISCE LA CARTA
@@ -123,7 +119,7 @@ function App() {
       timerRef.current = null;
     }
 
-    setLastGuessCorrect(takeCard);
+    setLastGuessCorrect(takeCard ? true : (isTimeout ? 'timeout' : false));
 
     // aggiungi la carta alla storia del game
     setRoundHistory(prev => [
@@ -181,7 +177,7 @@ function App() {
   useEffect(() => {
     if ((gameOver === -1 || gameOver === 1) && location.pathname === '/api/round/start') {
       const delay = setTimeout(() => {
-        navigate('/game/result');
+        navigate('/game/result', { replace: true });
       }, 2000);
 
       return () => clearTimeout(delay);
@@ -231,8 +227,29 @@ function App() {
     setTableCard(newTableCard);
   };
 
+
+
+  const handleLogin = async (credentials) => {
+    try {
+      const loginUser = await logIn(credentials);
+      console.log(loginUser)
+      setLoggedIn(true);
+      setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
+      setUser(loginUser);
+    } catch (err) {
+      setMessage({ msg: err, type: 'danger' })
+    }
+
+  }
+
+  const handleLogout = async () => {
+    await logout();
+    setLoggedIn(false);
+    setMessage('');
+  }
+
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f4f7fa'}}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f4f7fa' }}>
 
       <Routes>
         <Route
@@ -243,12 +260,14 @@ function App() {
           {/* Home page: welcome and start game button */}
           <Route index element={<Welcome />} />
 
+          <Route path="login" element={loggedIn ? <Navigate replace to='/' /> : <LoginForm handleLogin={handleLogin} />} />
+
 
           <Route
             path="api/round/start"
             element={
               <>
-                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect}/>
+                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} />
                 <ListCards cards={cards} onIntervalClick={handleIntervalClick} waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound}
                   gameOver={gameOver} />
               </>
