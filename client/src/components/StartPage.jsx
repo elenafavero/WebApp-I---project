@@ -1,8 +1,12 @@
 import { useNavigate } from 'react-router';
+import React, { useEffect } from 'react';
+
 import '../App.css';
 
 function StartPage(props) {
   const navigate = useNavigate();
+
+
 
   return (
     <div className="start-container">

@@ -100,7 +100,7 @@ function ListCards(props) { // cards
 
                     <button
                         className="btn btn-primary"
-                        onClick={() => navigate('/')}
+                        onClick={props.proceedToNextRound}
                         style={{
                             padding: '10px 20px',
                             fontSize: '1.1rem'

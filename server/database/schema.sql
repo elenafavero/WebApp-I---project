@@ -19,11 +19,21 @@ CREATE TABLE IF NOT EXISTS Card (
 CREATE TABLE IF NOT EXISTS Game (
   id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL,
-  -- status TEXT,
+  date_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   mistake_count INTEGER DEFAULT 0,
   cards_won_count INTEGER DEFAULT 0,
   FOREIGN KEY (user_id) REFERENCES User(id)
 );
+
+
+CREATE TABLE IF NOT EXISTS Round (
+  id INTEGER PRIMARY KEY,
+  game_id INTEGER NOT NULL,
+  card_id INTEGER NOT NULL,
+  is_won BOOLEAN DEFAULT FALSE,
+  FOREIGN KEY (game_id) REFERENCES Game(id),
+  FOREIGN KEY (card_id) REFERENCES Card(id)
+)
 
 INSERT OR IGNORE INTO User (username, email, salt, saltedPassword) VALUES
   ('Elena', 'faveroelena2@gmail.com', 'cc5d394129172ad6', 'a6bf999e5837a06c55ec0273a4b581090201e63f9ec1ee984fe58aeafa6545e6'),

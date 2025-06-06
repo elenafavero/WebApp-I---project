@@ -36,31 +36,31 @@ function App() {
   const hasInitialized = useRef(false);
 
   // avvio del gioco
- useEffect(() => {
-  if (location.pathname !== '/api/round/start') return;
+  useEffect(() => {
+    if (location.pathname !== '/api/round/start') return;
 
-  // Solo per utenti loggati, esegui una volta sola
-  if (loggedIn) {
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-  }
-
-  async function startGame() {
-    try {
-      const initialCards = await getThreeRandomCards();
-      const excludeIds = initialCards.map(c => c.bad_luck_index);
-      const newTableCard = await getRandomCardExcluding(excludeIds);
-
-      setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
-      setTableCard(newTableCard);
-      setError(null);
-    } catch (err) {
-      setError("Errore nel caricamento delle carte.");
+    // Solo per utenti loggati, esegui una volta sola
+    if (loggedIn) {
+      if (hasInitialized.current) return;
+      hasInitialized.current = true;
     }
-  }
 
-  startGame();
-}, [location.pathname, loggedIn]);
+    async function startGame() {
+      try {
+        const initialCards = await getThreeRandomCards();
+        const excludeIds = initialCards.map(c => c.bad_luck_index);
+        const newTableCard = await getRandomCardExcluding(excludeIds);
+
+        setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+        setTableCard(newTableCard);
+        setError(null);
+      } catch (err) {
+        setError("Errore nel caricamento delle carte.");
+      }
+    }
+
+    startGame();
+  }, [location.pathname, loggedIn]);
 
 
   const timerRef = useRef(null);
@@ -126,7 +126,11 @@ function App() {
       timerRef.current = null;
     }
 
+    
+
     setLastGuessCorrect(takeCard ? true : (isTimeout ? 'timeout' : false));
+
+    
 
     // aggiungi la carta alla storia del game
     setRoundHistory(prev => [
@@ -167,13 +171,24 @@ function App() {
 
 
   async function proceedToNextRound() {
-    if (gameOver !== 0) return;
+    if (gameOver !== 0) return; // se partita finita 
 
+
+    // da mettere per gestire correttamente un 2° round demo:
+    // devi resettare lastGuessCorrect e waitForNextRound prima di impostare la nuova tableCard
+    // altrimenti al 2° round demo i bottoni azzurri (per inserire la carta) rimangono inattivi, ti ritrovi
+    // "Right/wrong position" del 11° round demo nel 2° round demo e dopo 3 round giusti ti diceva "You win!"
     if (!loggedIn) {
+      setWaitForNextRound(false);
+      setLastGuessCorrect(null);
+      setCorrectGuesses(0);
+      setWrongGuesses(0);
       navigate('/');
       return;
     }
 
+
+    setWaitForNextRound(false);
     setLastGuessCorrect(null);
 
     const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
@@ -200,7 +215,9 @@ function App() {
 
   // Accumulare i dati di ogni game 
   useEffect(() => {
-    if (gameOver !== 0 && loggedIn) {
+    if (gameOver !== 0 && loggedIn) { 
+      // save round in the db
+
       setAllGamesHistory(prev => [
         ...prev,
         {
@@ -221,16 +238,16 @@ function App() {
 
   // Reset del gioco dopo ogni game concluso
   const resetGame = async () => {
-
-    setCards([]);
-    setTableCard(null);
+    setLastGuessCorrect(null);
+    setWaitForNextRound(false);
+    setRoundHistory([]);
     setRound(-1);
     setCorrectGuesses(0);
     setWrongGuesses(0);
     setGameOver(0);
-    setLastGuessCorrect(null);
-    setRoundHistory([]);
-    setWaitForNextRound(false);
+    setCards([]);
+    setTableCard(null);
+
     hasInitialized.current = false; // Resetta l'inizializzazione
 
     const initialCards = await getThreeRandomCards();
@@ -278,13 +295,13 @@ function App() {
         >
 
           {/* Home page: welcome and choose version */}
-          <Route index element={<Welcome />} />
+          <Route index element={<Welcome  handleLogout = {handleLogout}/>} />
 
           {/* Login */}
           <Route path="api/login" element={loggedIn ? <Navigate replace to='/api/start' /> : <LoginForm handleLogin={handleLogin} />} />
 
           {/* Start page (+ rules)  */}
-          <Route path="api/start" element={<StartPage loggedIn={loggedIn} />} />
+          <Route path="api/start" element={<StartPage loggedIn={loggedIn}/>} />
 
           {/* Game starts */}
           {/* TODO: cambia la route in start/round */}

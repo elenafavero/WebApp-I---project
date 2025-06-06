@@ -1,8 +1,17 @@
 import { useNavigate } from 'react-router';
 import '../App.css';
+import { useEffect } from 'react';
 
 function Welcome(props) {
     const navigate = useNavigate();
+
+    // devi assicurare che l'utente sia disconnesso prima di accedere alla pagina di login --
+    useEffect(() => {
+        // If the user is already logged in, redirect to the start page
+        if (props.loggedIn) {
+            props.handleLogout(); // Ensure the user is logged out first
+        }
+    });
 
     return (
         <div className="welcome-container">
