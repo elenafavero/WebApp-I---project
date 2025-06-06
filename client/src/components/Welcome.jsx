@@ -1,17 +1,23 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import '../App.css';
 import { useEffect } from 'react';
 
+
 function Welcome(props) {
     const navigate = useNavigate();
+    const location = useLocation();
 
-    // devi assicurare che l'utente sia disconnesso prima di accedere alla pagina di login --
+
     useEffect(() => {
-        // If the user is already logged in, redirect to the start page
         if (props.loggedIn) {
-            props.handleLogout(); // Ensure the user is logged out first
+            // Se l'utente è loggato e si trova su Welcome, facciamo logout o redirect
+            // Se vuoi solo fare logout:
+            props.handleLogout();
+
+            // oppure se vuoi solo redirect senza logout:
+            // navigate('/api/start', { replace: true });
         }
-    });
+    }, [props.loggedIn, props.handleLogout, navigate]);
 
     return (
         <div className="welcome-container">

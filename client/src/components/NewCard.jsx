@@ -3,6 +3,7 @@ import './Result.css';
 
 function NewCard(props) {
     const tableCard = props.tableCard;
+    console.log("[NEW CARD] loggedIn:", props.loggedIn);
 
     return (
         <>

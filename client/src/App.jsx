@@ -35,6 +35,7 @@ function App() {
   const location = useLocation();
   const hasInitialized = useRef(false);
 
+
   // avvio del gioco
   useEffect(() => {
     if (location.pathname !== '/api/round/start') return;
@@ -125,24 +126,13 @@ function App() {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    
 
     
 
     setLastGuessCorrect(takeCard ? true : (isTimeout ? 'timeout' : false));
 
-    
-
-    // aggiungi la carta alla storia del game
-    setRoundHistory(prev => [
-      ...prev,
-      {
-        round: round + 1,
-        card: tableCard,
-        result: takeCard ? 'won' : 'lost'
-      }
-    ]);
-
-    setRound(prev => prev + 1);
+  
 
     if (takeCard) {
       const newCards = [...cards, tableCard];
@@ -167,6 +157,22 @@ function App() {
     }
 
     setWaitForNextRound(true); // aspetta il click prima di continuare
+
+
+    if (!loggedIn) return;
+
+     // aggiungi la carta alla storia del game
+    setRoundHistory(prev => [
+      ...prev,
+      {
+        round: round + 1,
+        card: tableCard,
+        result: takeCard ? 'won' : 'lost'
+      }
+    ]);
+
+    setRound(prev => prev + 1);
+
   }
 
 
@@ -279,6 +285,7 @@ function App() {
       setLoggedIn(false);
       setUser(null);
       setMessage({ msg: 'Logout effettuato con successo', type: 'success' });
+      resetGame();
       navigate('/');
     } catch (err) {
       setMessage({ msg: 'Errore durante il logout', type: 'danger' });
@@ -295,7 +302,7 @@ function App() {
         >
 
           {/* Home page: welcome and choose version */}
-          <Route index element={<Welcome  handleLogout = {handleLogout}/>} />
+          <Route index element={<Welcome  handleLogout = {handleLogout} loggedIn={loggedIn}/>} />
 
           {/* Login */}
           <Route path="api/login" element={loggedIn ? <Navigate replace to='/api/start' /> : <LoginForm handleLogin={handleLogin} />} />
