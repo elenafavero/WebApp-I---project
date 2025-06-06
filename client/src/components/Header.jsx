@@ -18,12 +18,22 @@ function Header(props) {
                 <Container fluid>
                     <h1 style={{ color: 'white', margin: 0 }}>Stuff Happens</h1>
                     <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Button
-                            variant="outline-light"
-                            onClick={() => navigate('/profile')}
-                        >
-                            Your Profile
-                        </Button>
+                        {props.loggedIn && (
+                            <>
+                                <Button
+                                    variant="outline-light"
+                                    onClick={() => navigate('/profile')}
+                                >
+                                    Your Game History
+                                </Button>
+                                <Button
+                                    variant="outline-light"
+                                    onClick={()=>props.handleLogout()}
+                                >
+                                    Logout
+                                </Button>
+                            </>
+                        )}
                     </div>
                 </Container>
             </Navbar>

@@ -40,14 +40,10 @@ app.use(cors(corsOptions));;
 
 
 passport.use(new LocalStrategy({ usernameField: 'email' }, async function verify(username, password, cb) {
-  console.log('[PASSPORT] Verifying user:', username);
   const user = await getUser(username, password);
-  console.log('[PASSPORT] User fetched:', user);
   if (!user) {
-    console.log('[PASSPORT] User not found or wrong password');
     return cb(null, false, 'Incorrect username or password.');
   }
-  console.log('[PASSPORT] User found:', user);
   return cb(null, user);
 }));
 
@@ -97,7 +93,7 @@ app.post('/api/login', function (req, res, next) {
 
 /* ROUTES */
 
-app.get('/api/round/exclude', isLoggedIn, (req, res) => {
+app.get('/api/round/exclude', (req, res) => {
   const excludeIds = (req.query.exclude || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
 
   getRandomCardExcluding(excludeIds)
@@ -106,7 +102,8 @@ app.get('/api/round/exclude', isLoggedIn, (req, res) => {
 });
 
 
-app.get('/api/round/start', isLoggedIn, (req, res) => {
+app.get('/api/round/start', (req, res) => {
+  
   getThreeRandomCards()
     .then(cards => res.json(cards))
     .catch(err => res.status(500).json({ error: 'Failed to fetch 3 random cards' }));
@@ -129,11 +126,23 @@ app.post('/api/logout', (req, res) => {
 });
 
 
+/*
+//  TODO:
+// recupera la cronologia dei giochi dell'utente
 
-///////
-// GET /api/cards/random
-app.get('/api/cards/random', (req, res) => {
-  getRandomCard()
-    .then(cards => res.json(cards))
-    .catch(err => res.status(500).json({ error: 'Failed to fetch the new card' }));
-});
+app.get('/history', isLoggedIn, (req, res) => {
+  // Here you would typically fetch the user's game history from the database
+  // For now, we just return a placeholder response
+  res.json({ message: 'This is your game history', user: req.user });
+}
+
+
+// salva il gioco corrente nel db
+
+app.post('/save-game', isLoggedIn, (req, res) => {
+  const gameData = req.body; // Assume the game data is sent in the request body
+  // Here you would typically save the game data to the database
+  // For now, we just return a placeholder response
+  res.json({ message: 'Game saved successfully', user: req.user });
+}
+*/

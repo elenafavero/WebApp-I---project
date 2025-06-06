@@ -26,7 +26,7 @@ function NewCard(props) {
                     className="d-flex flex-column align-items-center"
                     style={{
                         position: 'fixed',
-                        top: '80px', // più in alto rispetto a prima
+                        top: '80px',
                         left: '50%',
                         transform: 'translateX(-50%)',
                         zIndex: 1100,

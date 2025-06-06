@@ -19,7 +19,7 @@ function ListCards(props) { // cards
                             className="mx-1 d-flex align-items-center"
                             style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
                             title="Inserisci prima della prima carta"
-                            
+
                         >
                             <div className="card-slot-inner">+</div>
                         </div>
@@ -51,8 +51,8 @@ function ListCards(props) { // cards
                 </React.Fragment>
             ))}
 
-            {/* Pulsante a destra */}
-            {props.waitForNextRound && props.gameOver === 0 && (
+            {/* LoggedIn == True: Pulsante a destra = Next Round */}
+            {props.loggedIn && props.waitForNextRound && props.gameOver === 0 && (
                 <div className="ms-4" style={{
                     position: 'absolute',
                     right: '70px',
@@ -68,6 +68,45 @@ function ListCards(props) { // cards
                         }}
                     >
                         Next Round
+                    </button>
+                </div>
+            )}
+
+            {/* LoggedIn == False: Pulsante a destra = Go back to Home Page */}
+            {!props.loggedIn && props.waitForNextRound && props.gameOver === 0 && (
+                <div className="ms-4 d-flex flex-column align-items-center" style={{
+                    position: 'absolute',
+                    right: '70px',
+                    top: '50%',
+                    transform: 'translateY(-50%)'
+                }}>
+                    <div
+                        className="mb-3 text-center px-3 py-2"
+                        style={{
+                            backgroundColor: '#fff3cd',
+                            color: '#856404',
+                            border: '1px solid #ffeeba',
+                            borderRadius: '8px',
+                            boxShadow: '0 0 5px rgba(0,0,0,0.1)',
+
+                            fontWeight: 'bold',
+                            fontSize: '1rem',
+                            maxWidth: '300px',
+                        }}
+                    >
+                        🎉 Demo round finished! <br />
+                        <span style={{ fontWeight: 600 }}>Log in</span> to unlock the full game experience!
+                    </div>
+
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => navigate('/')}
+                        style={{
+                            padding: '10px 20px',
+                            fontSize: '1.1rem'
+                        }}
+                    >
+                        Home page
                     </button>
                 </div>
             )}

@@ -29,32 +29,38 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null); // già usata nel login/logout
+  const [demoRound, setDemoRound] = useState([]); // per il demo, non usata in questo momento
 
   const navigate = useNavigate();
   const location = useLocation();
   const hasInitialized = useRef(false);
 
   // avvio del gioco
-  useEffect(() => {
-    if (hasInitialized.current || location.pathname !== '/api/round/start') return;
+ useEffect(() => {
+  if (location.pathname !== '/api/round/start') return;
+
+  // Solo per utenti loggati, esegui una volta sola
+  if (loggedIn) {
+    if (hasInitialized.current) return;
     hasInitialized.current = true;
+  }
 
-    async function startGame() {
-      try {
-        const initialCards = await getThreeRandomCards();
-        const excludeIds = initialCards.map(c => c.bad_luck_index);
-        const newTableCard = await getRandomCardExcluding(excludeIds);
+  async function startGame() {
+    try {
+      const initialCards = await getThreeRandomCards();
+      const excludeIds = initialCards.map(c => c.bad_luck_index);
+      const newTableCard = await getRandomCardExcluding(excludeIds);
 
-        setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
-        setTableCard(newTableCard);
-        setError(null);
-      } catch (err) {
-        setError(err.message || 'Errore durante l’inizializzazione del gioco');
-      }
+      setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+      setTableCard(newTableCard);
+      setError(null);
+    } catch (err) {
+      setError("Errore nel caricamento delle carte.");
     }
+  }
 
-    startGame();
-  }, [location.pathname]);
+  startGame();
+}, [location.pathname, loggedIn]);
 
 
   const timerRef = useRef(null);
@@ -162,6 +168,12 @@ function App() {
 
   async function proceedToNextRound() {
     if (gameOver !== 0) return;
+
+    if (!loggedIn) {
+      navigate('/');
+      return;
+    }
+
     setLastGuessCorrect(null);
 
     const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
@@ -188,7 +200,7 @@ function App() {
 
   // Accumulare i dati di ogni game 
   useEffect(() => {
-    if (gameOver !== 0) {
+    if (gameOver !== 0 && loggedIn) {
       setAllGamesHistory(prev => [
         ...prev,
         {
@@ -200,7 +212,8 @@ function App() {
         }
       ]);
     }
-  }, [gameOver]);
+  }, [gameOver, loggedIn]);
+
 
 
   if (error) return <div className="alert alert-danger mt-4">{error}</div>;
@@ -244,9 +257,15 @@ function App() {
   }
 
   const handleLogout = async () => {
-    await logout();
-    setLoggedIn(false);
-    setMessage('');
+    try {
+      await logout();
+      setLoggedIn(false);
+      setUser(null);
+      setMessage({ msg: 'Logout effettuato con successo', type: 'success' });
+      navigate('/');
+    } catch (err) {
+      setMessage({ msg: 'Errore durante il logout', type: 'danger' });
+    }
   }
 
   return (
@@ -255,7 +274,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Header />}
+          element={<Header loggedIn={loggedIn} handleLogout={handleLogout} />}
         >
 
           {/* Home page: welcome and choose version */}
@@ -275,7 +294,7 @@ function App() {
               <>
                 <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} />
                 <ListCards cards={cards} onIntervalClick={handleIntervalClick} waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound}
-                  gameOver={gameOver} />
+                  gameOver={gameOver} loggedIn={loggedIn} />
               </>
             }
           />

@@ -45,12 +45,10 @@ async function getThreeRandomCards() {
 
 
 async function logIn(credentials) {
-    console.log("[API] Logging in with credentials:", credentials);
     const bodyObject = {
         email: credentials.email,
         password: credentials.password
     }
-    console.log("[API] Body object for login:", bodyObject);
     const response = await fetch(`${URI}/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
