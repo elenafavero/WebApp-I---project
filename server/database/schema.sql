@@ -29,15 +29,22 @@ CREATE TABLE IF NOT EXISTS Game (
 CREATE TABLE IF NOT EXISTS Round (
   id INTEGER PRIMARY KEY,
   game_id INTEGER NOT NULL,
+  round_number INTEGER NOT NULL,
   card_id INTEGER NOT NULL,
-  is_won BOOLEAN DEFAULT FALSE,
+  is_won INTEGER NOT NULL, -- 1 for won, 0 for lost, -1 for initial cards
   FOREIGN KEY (game_id) REFERENCES Game(id),
   FOREIGN KEY (card_id) REFERENCES Card(id)
-)
+);
 
 INSERT OR IGNORE INTO User (username, email, salt, saltedPassword) VALUES
   ('Elena', 'faveroelena2@gmail.com', 'cc5d394129172ad6', 'a6bf999e5837a06c55ec0273a4b581090201e63f9ec1ee984fe58aeafa6545e6'),
   ('Mario', 'mariobros@gmail.com', 'd3e4e8f2767c5a2f', '46a1906e14c17bd134fc3cbcdd615586cb2f36996218b88ba1680d34ba4ecc69');
+
+INSERT OR IGNORE INTO Game (user_id, date_created, mistake_count, cards_won_count) VALUES
+-- game_id = 1
+  (1, "2025-07-07T08:20:30.000Z", 1, 3), -- Elena, 1 mistake, 3 cards won -> win
+-- game_id = 2
+  (1, "2025-06-07T08:20:30.000Z", 3, 1); -- Elena, 3 mistakes, 1 card won -> lose
 
 
 INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
@@ -91,3 +98,29 @@ INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
   ('You lose your wallet at the airport', '/images/theft_airport.jpg', 85.5),
   ('You break a leg hiking a mountain', '/images/broken_leg.jpg', 90.0),
   ('you get attacked at night in a city far from the hotel', '/images/attack.jpg', 100.0);
+
+
+
+  INSERT OR IGNORE INTO Round (game_id, round_number, card_id, is_won) VALUES
+-- Elena's first game, won 
+  -- initial cards
+  (1, -1, 9, -1),
+  (1, -1, 11, -1),
+  (1, -1, 32, -1),
+
+  (1, 0, 47, TRUE),
+  (1, 1, 23, FALSE), 
+  (1, 2, 35, TRUE), 
+  (1, 3, 16, TRUE),
+
+-- Elena's second game, lost
+  -- initial cards
+  (2, -1, 23, -1),
+  (2, -1, 43, -1),
+  (2, -1, 49, -1),
+
+  (2, 0, 4, FALSE),
+  (2, 1, 12, FALSE),
+  (2, 2, 21, TRUE),
+  (2, 3, 2, TRUE),
+  (2, 4, 30, FALSE);
