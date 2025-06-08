@@ -7,7 +7,8 @@ class User {
 }
 
 class Card {
-    constructor(description, imageUrl, bad_luck_index) {
+    constructor(id, description, imageUrl, bad_luck_index) {
+        this.id = id;
         this.description = description;
         this.imageUrl = imageUrl; // URL o path all'immagine rappresentativa (/server/images)
         this.bad_luck_index = bad_luck_index;       // bad luck index

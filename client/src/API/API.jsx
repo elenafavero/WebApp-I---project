@@ -7,12 +7,13 @@ const URI = "http://localhost:3001/api"
 async function getRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
+
         const response = await fetch(`${URI}/round/exclude${queryString}`, {
             credentials: 'include'
         });
         if (response.ok) {
             const card = await response.json();
-            return new Card(card.description, card.imageUrl, card.bad_luck_index);
+            return new Card(card.id, card.description, card.imageUrl, card.bad_luck_index);
         } else {
             throw new Error("API error: " + response.status);
         }
@@ -34,7 +35,7 @@ async function getThreeRandomCards() {
         });
         if (response.ok) {
             const cards = await response.json();
-            return cards.map(card => new Card(card.description, card.imageUrl, card.bad_luck_index));
+            return cards.map(card => new Card(card.id, card.description, card.imageUrl, card.bad_luck_index));
         } else {
             throw new Error("API error: " + response.status);
         }
@@ -56,7 +57,6 @@ async function logIn(credentials) {
         body: JSON.stringify(bodyObject)
     })
     if (response.ok) {
-        console.log("[API] Login successful, fetching user data");
         const user = await response.json();
         return user;
 
@@ -79,16 +79,49 @@ async function logout() {
 
 
 async function getCurrentUser() {
-  const res = await fetch(URI + '/session/current', {
-    credentials: 'include'
-  });
+    const res = await fetch(URI + '/session/current', {
+        credentials: 'include'
+    });
 
-  if (!res.ok) throw new Error("Not authenticated");
-  return res.json();
+    if (!res.ok) throw new Error("Not authenticated");
+    return res.json();
+}
+
+
+
+async function saveGameToDB(gameData) {
+    const response = await fetch(`${URI}/game/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(gameData)
+    });
+
+    if (!response.ok) {
+        const err = await response.text();
+        throw new Error(err);
+    }
+
+    return await response.json(); // contiene gameId
+}
+
+
+async function getUserGames(userId) {
+    try {
+        const response = await fetch(`${URI}/users/${userId}/games`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw new Error('Failed to fetch user games: ' + error.message);
+    }
 }
 
 
 
 
 
-export {getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser};
+
+export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser, saveGameToDB, getUserGames };

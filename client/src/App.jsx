@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getThreeRandomCards, getRandomCardExcluding } from './API/API';
+import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB } from './API/API';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
@@ -25,11 +25,9 @@ function App() {
   const [roundHistory, setRoundHistory] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
   const [waitForNextRound, setWaitForNextRound] = useState(false);
-  const [allGamesHistory, setAllGamesHistory] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null); // già usata nel login/logout
-  const [demoRound, setDemoRound] = useState([]); // per il demo, non usata in questo momento
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -50,10 +48,27 @@ function App() {
       try {
         const initialCards = await getThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
+        /* Test per veroificare che la carte estratta non sia tra quelle già in mano */
+        /*
+        for (let i = 0; i < 500; i++) {
+          const testCard = await getRandomCardExcluding(excludeIds);
+          if (excludeIds.includes(testCard.bad_luck_index)) {
+            console.error("⚠️ Test fallito! La carta restituita è tra quelle escluse:", testCard);
+            break;
+          }
+        }
+        */
         const newTableCard = await getRandomCardExcluding(excludeIds);
 
         setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
         setTableCard(newTableCard);
+        setRoundHistory(
+          initialCards.map((card) => ({
+            round: -1,
+            card: card,
+            result: -1
+          }))
+        );
         setError(null);
       } catch (err) {
         setError("Errore nel caricamento delle carte.");
@@ -126,13 +141,13 @@ function App() {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
-    
 
-    
+
+
 
     setLastGuessCorrect(takeCard ? true : (isTimeout ? 'timeout' : false));
 
-  
+
 
     if (takeCard) {
       const newCards = [...cards, tableCard];
@@ -161,7 +176,7 @@ function App() {
 
     if (!loggedIn) return;
 
-     // aggiungi la carta alla storia del game
+    // aggiungi la carta alla storia del game
     setRoundHistory(prev => [
       ...prev,
       {
@@ -221,19 +236,19 @@ function App() {
 
   // Accumulare i dati di ogni game 
   useEffect(() => {
-    if (gameOver !== 0 && loggedIn) { 
+    if (gameOver !== 0 && loggedIn && user) {
       // save round in the db
 
-      setAllGamesHistory(prev => [
-        ...prev,
-        {
-          date: new Date(),
-          rounds: roundHistory,
-          correctGuesses,
-          wrongGuesses,
-          result: gameOver === 1 ? 'won' : 'lost',
-        }
-      ]);
+      const gameData = {
+        rounds: roundHistory,
+        mistakeCount: wrongGuesses,
+        cardsWonCount: correctGuesses,
+      };
+
+      saveGameToDB(gameData).catch(err => {
+        console.error("Errore nel salvataggio del game:", err);
+      });
+
     }
   }, [gameOver, loggedIn]);
 
@@ -261,6 +276,13 @@ function App() {
     const newTableCard = await getRandomCardExcluding(excludeIds);
 
     setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+    setRoundHistory(
+      initialCards.map((card) => ({
+        round: -1,
+        card: card,
+        result: -1
+      }))
+    );
     setTableCard(newTableCard);
   };
 
@@ -269,7 +291,6 @@ function App() {
   const handleLogin = async (credentials) => {
     try {
       const loginUser = await logIn(credentials);
-      console.log(loginUser)
       setLoggedIn(true);
       setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
       setUser(loginUser);
@@ -302,13 +323,13 @@ function App() {
         >
 
           {/* Home page: welcome and choose version */}
-          <Route index element={<Welcome  handleLogout = {handleLogout} loggedIn={loggedIn}/>} />
+          <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
 
           {/* Login */}
           <Route path="api/login" element={loggedIn ? <Navigate replace to='/api/start' /> : <LoginForm handleLogin={handleLogin} />} />
 
           {/* Start page (+ rules)  */}
-          <Route path="api/start" element={<StartPage loggedIn={loggedIn}/>} />
+          <Route path="api/start" element={<StartPage loggedIn={loggedIn} />} />
 
           {/* Game starts */}
           {/* TODO: cambia la route in start/round */}
@@ -331,10 +352,15 @@ function App() {
 
           <Route
             path="profile"
-            element={<Profile allGamesHistory={allGamesHistory} />}
+            element={
+              <Profile
+                userId={loggedIn && user ? user.id : null}
+                loggedIn={loggedIn}
+              />
+            }
           />
 
-
+          {/* Stai cercando di fare la fetch dei game dal db  */}
 
 
         </Route>

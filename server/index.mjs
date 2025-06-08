@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { getRandomCard, getThreeRandomCards, getRandomCardExcluding } from './dao/dao.mjs';
+import { getRandomCard, getThreeRandomCards, getRandomCardExcluding, insertGameWithRounds, getUserGamesFromDb } from './dao/dao.mjs';
 
 import { check, validationResult } from 'express-validator';
 import passport from 'passport';
@@ -94,7 +94,7 @@ app.post('/api/login', function (req, res, next) {
 /* ROUTES */
 
 app.get('/api/round/exclude', (req, res) => {
-  const excludeIds = (req.query.exclude || '').split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+  const excludeIds = (req.query.exclude || '').split(',').map(id => parseFloat(id)).filter(id => !isNaN(id));
 
   getRandomCardExcluding(excludeIds)
     .then(card => res.json(card))
@@ -103,7 +103,7 @@ app.get('/api/round/exclude', (req, res) => {
 
 
 app.get('/api/round/start', (req, res) => {
-  
+
   getThreeRandomCards()
     .then(cards => res.json(cards))
     .catch(err => res.status(500).json({ error: 'Failed to fetch 3 random cards' }));
@@ -125,24 +125,38 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
+app.post('/api/game/save', async (req, res) => {
+  const userId = req.user?.id;
+  const { rounds, mistakeCount, cardsWonCount } = req.body;
 
-/*
-//  TODO:
-// recupera la cronologia dei giochi dell'utente
+  if (!userId || !Array.isArray(rounds)) {
+    return res.status(400).json({ error: 'Invalid data' });
+  }
 
-app.get('/history', isLoggedIn, (req, res) => {
-  // Here you would typically fetch the user's game history from the database
-  // For now, we just return a placeholder response
-  res.json({ message: 'This is your game history', user: req.user });
-}
+  try {
+    const gameId = await insertGameWithRounds(userId, mistakeCount, cardsWonCount, rounds);
+    res.status(201).json({ gameId });
+  } catch (err) {
+    console.error("Error saving game:", err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
-// salva il gioco corrente nel db
+app.get('/api/users/:userId/games', async (req, res) => {
+  const userId = req.params.userId;
 
-app.post('/save-game', isLoggedIn, (req, res) => {
-  const gameData = req.body; // Assume the game data is sent in the request body
-  // Here you would typically save the game data to the database
-  // For now, we just return a placeholder response
-  res.json({ message: 'Game saved successfully', user: req.user });
-}
-*/
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const games = await getUserGamesFromDb(userId);
+    res.json(games);
+  } catch (err) {
+    console.error("Error fetching user games:", err);
+    res.status(500).json({ error: "Errore nel recupero dei giochi" });
+  }
+});
+
+

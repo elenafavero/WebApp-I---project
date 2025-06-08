@@ -1,43 +1,105 @@
-import Accordion from 'react-bootstrap/Accordion';
+import { useEffect, useState, useRef } from 'react';
+import { getUserGames } from '../API/API';
 import Card from 'react-bootstrap/Card';
-import Image from 'react-bootstrap/Image';
-import '../App.css'; 
+import ListGroup from 'react-bootstrap/ListGroup';
+import Badge from 'react-bootstrap/Badge';
+import '../App.css';
 
-// TODO: inserisci anche le 3 carte iniziali
+function Profile(props) {
+    const [games, setGames] = useState([]);
+    const [error, setError] = useState(null);
+    const hasInitialized = useRef(false);
 
-function Profile({ allGamesHistory }) {
-return (
-    <Accordion className="fixed-width-accordion" defaultActiveKey="0">
-        {allGamesHistory.map((game, index) => (
-            <Accordion.Item eventKey={index.toString()} key={index}>
-                <Accordion.Header>
-                    <span style={{ fontWeight: 'bold' }}>
-                        Game #{index + 1} – {game.result.toUpperCase()}: {game.correctGuesses} ✓ / {game.wrongGuesses}✗
-                    </span>
-                </Accordion.Header>
-                <Accordion.Body>
-                    {game.rounds.map((round, i) => (
-                        <Card key={i} className="mb-3">
-                            <Card.Body className="d-flex gap-3 align-items-center">
-                                <Image src={round.card.imageUrl} alt={round.card.name} rounded style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
-                                <div>
-                                    <h5 style={{ fontWeight: 'bold' }}>{round.card.name}</h5>
-                                    <p style={{ fontWeight: 'bold' }}>{round.card.description}</p>
-                                    <p
-                                        className={`mb-0 ${round.result === 'won' ? 'text-success' : 'text-danger'}`}
-                                        style={{ fontWeight: 'bold' }}
-                                    >
-                                        Round {round.round + 1}: {round.result === 'won' ? 'Correct ✅' : 'Wrong ❌'}
-                                    </p>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    ))}
-                </Accordion.Body>
-            </Accordion.Item>
-        ))}
-    </Accordion>
-);
+    const { loggedIn, userId } = props;
+
+    useEffect(() => {
+        if (!loggedIn) return;
+        if (hasInitialized.current) return;
+
+        hasInitialized.current = true;
+
+        async function fetchGames() {
+            try {
+                const userGames = await getUserGames(userId);
+                userGames.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)); // Ordina per data decrescente
+                setGames(userGames);
+                setError(null);
+            } catch (err) {
+                setError(err.message);
+            }
+        }
+
+        fetchGames();
+    }, [loggedIn, userId]);
+
+    const getGameResult = (game) => {
+        if (game.mistake_count >= 3) return <Badge bg="danger">Lost</Badge>;
+        if (game.cards_won_count >= 3) return <Badge bg="success">Won</Badge>;
+        return 'In progress';
+    };
+
+
+    if (error) return <p className="text-danger text-center mt-4">Error: {error}</p>;
+    if (games.length === 0) return <p className="text-center mt-4">No games found.</p>;
+
+    const getResultBadge = (result) => {
+        switch (result) {
+            case 1: return <Badge bg="success">Won</Badge>;
+            case 0: return <Badge bg="danger">Lost</Badge>;
+            default: return <Badge bg="secondary">Initial card</Badge>;
+        }
+    };
+
+    return (
+        <div className="container mt-4 profile-container">
+            <h2 className="mb-4 text-center">User Games Overview</h2>
+            {games.map(game => (
+                <div key={game.id} className="game-table-wrapper">
+                    <h3 className="game-date" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <span>
+                            Game from {new Date(game.date_created).toLocaleDateString()}
+                        </span>
+                        <span className="game-result">
+                            {getGameResult(game)}
+                        </span>
+                    </h3>
+                    <div className="game-stats" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span><b>Mistakes:</b> {game.mistake_count}</span>
+                        <span><b>Cards Won:</b> {game.cards_won_count}</span>
+                        <span style={{ marginLeft: 'auto' }}><b>Total Cards collected:</b> {game.cards_won_count + 3}</span>
+                    </div>
+                    <table className="game-rounds-table">
+                        <thead>
+                            <tr>
+                                <th>Round #</th>
+                                <th>Card</th>
+                                <th>Description</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {game.rounds.map(round => (
+                                <tr key={round.id}>
+                                    <td>{round.round_number === -1 ? `initial card` : round.round_number}</td>
+                                    <td>
+                                        <img
+                                            src={round.card.image_url}
+                                            alt={round.card.description}
+                                            className="round-card-image"
+                                        />
+                                    </td>
+                                    <td>{round.card.description}</td>
+                                    <td>{getResultBadge(round.is_won)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ))}
+        </div>
+    );
 }
+
+
 
 export default Profile;

@@ -6,7 +6,6 @@ function ListCards(props) { // cards
     const navigate = useNavigate();
     const location = useLocation();
 
-    console.log("[LIST CARD] loggedIn:", props.loggedIn);
 
 
     const cards = props.cards;
