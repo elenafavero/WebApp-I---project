@@ -28,6 +28,8 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null); // già usata nel login/logout
+  const [loading, setLoading] = useState(false);
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,18 +48,9 @@ function App() {
 
     async function startGame() {
       try {
+        setLoading(true); // <-- INIZIO CARICAMENTO
         const initialCards = await getThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
-        /* Test per veroificare che la carte estratta non sia tra quelle già in mano */
-        /*
-        for (let i = 0; i < 500; i++) {
-          const testCard = await getRandomCardExcluding(excludeIds);
-          if (excludeIds.includes(testCard.bad_luck_index)) {
-            console.error("⚠️ Test fallito! La carta restituita è tra quelle escluse:", testCard);
-            break;
-          }
-        }
-        */
         const newTableCard = await getRandomCardExcluding(excludeIds);
 
         setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
@@ -72,8 +65,11 @@ function App() {
         setError(null);
       } catch (err) {
         setError("Errore nel caricamento delle carte.");
+      } finally {
+        setLoading(false); // <-- FINE CARICAMENTO
       }
     }
+
 
     startGame();
   }, [location.pathname, loggedIn]);
@@ -377,13 +373,24 @@ function App() {
           <Route
             path="api/round/start"
             element={
-              <>
-                <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} />
-                <ListCards cards={cards} onIntervalClick={handleIntervalClick} waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound}
-                  gameOver={gameOver} loggedIn={loggedIn} />
-              </>
+              loading ? (
+                <div className="custom-loader" />
+              ) : (
+                <>
+                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} />
+                  <ListCards
+                    cards={cards}
+                    onIntervalClick={handleIntervalClick}
+                    waitForNextRound={waitForNextRound}
+                    proceedToNextRound={proceedToNextRound}
+                    gameOver={gameOver}
+                    loggedIn={loggedIn}
+                  />
+                </>
+              )
             }
           />
+
 
           {/* Game result (+ summary)*/}
           <Route
