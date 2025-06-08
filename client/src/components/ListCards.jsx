@@ -15,18 +15,16 @@ function ListCards(props) { // cards
             {cards.map((card, index) => (
                 <React.Fragment key={index}>
                     {/* Slot tra le carte */}
-                    {index === 0 && (
+                    {index === 0 && props.gameOver === 0 && (
                         <div
                             onClick={() => props.onIntervalClick(-1, 0)}
                             className="mx-1 d-flex align-items-center"
                             style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
                             title="Inserisci prima della prima carta"
-
                         >
                             <div className="card-slot-inner">+</div>
                         </div>
                     )}
-
                     {/* Carta */}
                     <div className="card mx-1" style={{ width: '12rem', height: '15rem' }}>
                         <img
@@ -42,18 +40,18 @@ function ListCards(props) { // cards
                     </div>
 
                     {/* Slot tra carta corrente e successiva */}
-                    <div
-                        onClick={() => props.onIntervalClick(index, index + 1)}
-                        className="mx-1 d-flex align-items-center"
-                        style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
-                        title="Inserisci tra le carte"
-                    >
-                        <div className="card-slot-inner">+</div>
-                    </div>
-                </React.Fragment>
-            ))}
-
-            {/* LoggedIn == True: Pulsante a destra = Next Round */}
+                    {props.gameOver === 0 && (
+                        <div
+                            onClick={() => props.onIntervalClick(index, index + 1)}
+                            className="mx-1 d-flex align-items-center"
+                            style={{ width: '20px', cursor: 'pointer', height: '15rem' }}
+                            title="Inserisci tra le carte"
+                        >
+                            <div className="card-slot-inner">+</div>
+                        </div>
+                    )}
+                    </React.Fragment>
+                ))}
             {props.loggedIn && props.waitForNextRound && props.gameOver === 0 && (
                 <div className="ms-4" style={{
                     position: 'absolute',

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB,validateInterval } from './API/API';
+import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB, validateInterval } from './API/API';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
@@ -388,7 +388,9 @@ function App() {
           {/* Game result (+ summary)*/}
           <Route
             path="game/result"
-            element={<ShowResult gameOver={gameOver} resetGame={resetGame} />}
+            element={<ShowResult gameOver={gameOver} resetGame={resetGame} cards={cards} onIntervalClick={handleIntervalClick}
+              waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound} loggedIn={loggedIn}
+            />}
           />
 
           <Route
@@ -401,7 +403,6 @@ function App() {
             }
           />
 
-          {/* Stai cercando di fare la fetch dei game dal db  */}
 
 
         </Route>

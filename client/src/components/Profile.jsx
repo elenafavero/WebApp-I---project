@@ -1,7 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
 import { getUserGames } from '../API/API';
-import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
 import '../App.css';
 
