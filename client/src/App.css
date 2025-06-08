@@ -186,7 +186,7 @@
 
 
 /* Stile for: Start Page */
-/* "User Games Overview */
+    /* "User Games Overview */
 .section-title {
   font-family: 'Fredoka', 'Segoe UI', sans-serif;
   font-size: 2.2rem;
@@ -201,6 +201,8 @@
   width: 100%;
   text-align: center;
 }
+
+    /* Game Table */
 .start-container {
   padding: 40px 20px;
   min-height: 80vh;
