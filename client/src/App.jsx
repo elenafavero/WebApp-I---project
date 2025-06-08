@@ -295,7 +295,7 @@ function App() {
       setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
       setUser(loginUser);
     } catch (err) {
-      setMessage({ msg: err, type: 'danger' })
+      setMessage({ msg: "Invalid credentials", type: 'danger' })
     }
 
   }
@@ -305,16 +305,53 @@ function App() {
       await logout();
       setLoggedIn(false);
       setUser(null);
-      setMessage({ msg: 'Logout effettuato con successo', type: 'success' });
+      setMessage({ msg: 'Logout successful', type: 'success' });
       resetGame();
       navigate('/');
     } catch (err) {
-      setMessage({ msg: 'Errore durante il logout', type: 'danger' });
+      setMessage({ msg: 'Error during logout', type: 'danger' });
     }
   }
 
+  // Usa un contenitore per il messaggio posizionato in modo assoluto in alto al centro
+  // Mostra il messaggio per pochi secondi e poi lo nasconde automaticamente con dissolvenza
+  const [showMessage, setShowMessage] = useState(false);
+
+  useEffect(() => {
+    if (message) {
+      setShowMessage(true);
+      const timer = setTimeout(() => setShowMessage(false), 1200); // start fade out
+      const removeTimer = setTimeout(() => setMessage(null), 1700); // remove after fade
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(removeTimer);
+      };
+    }
+  }, [message]);
+
   return (
-    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f4f7fa' }}>
+    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f4f7fa', position: 'relative' }}>
+      {message && (
+        <div
+          className={`alert alert-${message.type || 'warning'}`}
+          role="alert"
+          style={{
+            position: 'fixed',
+            top: '140px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1050,
+            minWidth: 300,
+            maxWidth: 500,
+            textAlign: 'center',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            opacity: showMessage ? 1 : 0,
+            transition: 'opacity 0.5s ease'
+          }}
+        >
+          {message.msg || message}
+        </div>
+      )}
 
       <Routes>
         <Route
