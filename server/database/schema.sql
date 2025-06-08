@@ -42,9 +42,9 @@ INSERT OR IGNORE INTO User (username, email, salt, saltedPassword) VALUES
 
 INSERT OR IGNORE INTO Game (user_id, date_created, mistake_count, cards_won_count) VALUES
 -- game_id = 1
-  (1, "2025-07-07T08:20:30.000Z", 1, 3), -- Elena, 1 mistake, 3 cards won -> win
+  (1, "2025-05-05T08:20:30.000Z", 1, 3), -- Elena, 1 mistake, 3 cards won -> win
 -- game_id = 2
-  (1, "2025-06-07T08:20:30.000Z", 3, 1); -- Elena, 3 mistakes, 1 card won -> lose
+  (1, "2025-06-07T08:20:30.000Z", 3, 2); -- Elena, 3 mistakes, 2 card won -> lose
 
 
 INSERT OR IGNORE INTO Card (description, image_url, bad_luck_index) VALUES
