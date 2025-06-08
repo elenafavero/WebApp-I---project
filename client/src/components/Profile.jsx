@@ -6,6 +6,7 @@ import '../App.css';
 function Profile(props) {
     const [games, setGames] = useState([]);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const hasInitialized = useRef(false);
 
     const { loggedIn, userId } = props;
@@ -18,14 +19,18 @@ function Profile(props) {
 
         async function fetchGames() {
             try {
+                setLoading(true);
                 const userGames = await getUserGames(userId);
-                userGames.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)); // Ordina per data decrescente
+                userGames.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
                 setGames(userGames);
                 setError(null);
             } catch (err) {
                 setError(err.message);
+            } finally {
+                setLoading(false);
             }
         }
+
 
         fetchGames();
     }, [loggedIn, userId]);
@@ -37,15 +42,28 @@ function Profile(props) {
     };
 
 
-    if (error) return <p className="text-danger text-center mt-4">Error: {error}</p>;
-    if (games.length === 0)
-        if (games.length === 0)
-            return (
-                <div className="no-games-message">
-                    <h2 className="no-games-title">No games yet!</h2>
-                    <p className="no-games-subtitle">Start playing to see your game history here.</p>
-                </div>
-            );
+    if (loading) {
+        return (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
+                <div className="custom-loader" />
+            </div>
+        );
+    }
+
+
+    if (error) {
+        return <p className="text-danger text-center mt-4">Error: {error}</p>;
+    }
+
+    if (!loading && games.length === 0) {
+        return (
+            <div className="no-games-message">
+                <h2 className="no-games-title">No games yet!</h2>
+                <p className="no-games-subtitle">Start playing to see your game history here.</p>
+            </div>
+        );
+    }
+
 
 
 

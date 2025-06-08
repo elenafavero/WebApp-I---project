@@ -14,7 +14,7 @@ function ListCards(props) { // cards
         <div className="d-flex justify-content-center gap-0" style={{ width: '100%' }}>
             {cards.map((card, index) => (
                 <React.Fragment key={index}>
-                    {/* Slot tra le carte */}
+                    {/* Slot between cards */}
                     {index === 0 && props.gameOver === 0 && (
                         <div
                             onClick={() => props.onIntervalClick(-1, 0)}
@@ -25,7 +25,7 @@ function ListCards(props) { // cards
                             <div className="card-slot-inner">+</div>
                         </div>
                     )}
-                    {/* Carta */}
+                    {/* Card */}
                     <div className="card mx-1" style={{ width: '12rem', height: '15rem' }}>
                         <img
                             src={card.imageUrl}
@@ -39,7 +39,7 @@ function ListCards(props) { // cards
                         </div>
                     </div>
 
-                    {/* Slot tra carta corrente e successiva */}
+                    {/* Slot between current card and next card */}
                     {props.gameOver === 0 && (
                         <div
                             onClick={() => props.onIntervalClick(index, index + 1)}
