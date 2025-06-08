@@ -245,3 +245,31 @@
 .round-card-image:hover {
     transform: scale(1.1);
 }
+
+
+/* No Games yet - Profile page */
+.no-games-message {
+  text-align: center;
+  margin-top: 2.5rem; /* aumentato per abbassare tutto */
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  font-family: 'Fredoka', 'Segoe UI', sans-serif;
+}
+
+.no-games-title {
+  color: #f97316;
+  font-weight: 800;
+  font-size: 2.5rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+  margin-top: 0.7rem; /* aggiunto margine sopra per abbassare */
+  margin-bottom: 0.3rem;
+}
+
+.no-games-subtitle {
+  color: #fdba74;
+  font-size: 1.5rem;
+  margin-top: 0.5rem; /* aggiunto margine sopra per abbassare */
+  font-weight: 700;
+}

@@ -40,7 +40,18 @@ function Profile(props) {
 
 
     if (error) return <p className="text-danger text-center mt-4">Error: {error}</p>;
-    if (games.length === 0) return <p className="text-center mt-4">No games found.</p>;
+    if (games.length === 0)
+        if (games.length === 0)
+            return (
+                <div className="no-games-message">
+                    <h2 className="no-games-title">No games yet!</h2>
+                    <p className="no-games-subtitle">Start playing to see your game history here.</p>
+                </div>
+            );
+
+
+
+
 
     const getResultBadge = (result) => {
         switch (result) {
