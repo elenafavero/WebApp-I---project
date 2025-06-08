@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB } from './API/API';
+import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB,validateInterval } from './API/API';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
@@ -120,14 +120,18 @@ function App() {
 
 
   // return: true if the choosen interval is correct, false otherwise
-  function handleIntervalClick(startIndex, endIndex) {
-    const startValue = cards[startIndex]?.bad_luck_index ?? -Infinity;
-    const endValue = cards[endIndex]?.bad_luck_index ?? Infinity;
-    const tableValue = tableCard.bad_luck_index;
+  async function handleIntervalClick(startIndex, endIndex) {
+    try {
+      const isCorrect = await validateInterval(
+        cards[startIndex]?.bad_luck_index ?? -Infinity,
+        cards[endIndex]?.bad_luck_index ?? Infinity,
+        tableCard.bad_luck_index
+      );
 
-    const inCorrectInterval = tableValue > startValue && tableValue < endValue;
-
-    handleGuess(inCorrectInterval);
+      handleGuess(isCorrect);
+    } catch (error) {
+      console.error("Errore durante la validazione:", error);
+    }
   }
 
 

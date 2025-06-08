@@ -160,3 +160,22 @@ app.get('/api/users/:userId/games', async (req, res) => {
 });
 
 
+
+app.post('/api/round/guess', async (req, res) => {
+  const { start_index, end_index, table_index } = req.body;
+
+  try {
+    const correct = table_index > start_index && table_index < end_index;
+
+    return res.json({ correct });
+  } catch (error) {
+    console.error("Errore endpoint guess:", error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+
+
+
+
+

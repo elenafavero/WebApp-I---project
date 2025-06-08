@@ -119,9 +119,30 @@ async function getUserGames(userId) {
     }
 }
 
+async function validateInterval(start_index, end_index, table_index ) {
+  try {
+    const response = await fetch(`${URI}/round/guess`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ start_index, end_index, table_index  }),
+    });
+
+    if (!response.ok) throw new Error(`Server error ${response.status}`);
+
+    const data = await response.json();
+    return data.correct; // true o false
+  } catch (error) {
+    console.error("API validateInterval error:", error);
+    throw error;
+  }
+}
 
 
 
 
 
-export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser, saveGameToDB, getUserGames };
+
+
+
+
+export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser, saveGameToDB, getUserGames, validateInterval};
