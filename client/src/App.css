@@ -1,3 +1,74 @@
+/* NavBar */
+.custom-navbar {
+  background-color: #2196F3; /* blu originale */
+  padding: 10px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-title {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2.3rem; /* aumentata la dimensione */
+  font-weight: 600;
+  color: white;
+  position: relative;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Contorno arancione più spesso */
+.navbar-title::after {
+  content: 'Stuff Happens';
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: transparent;
+  -webkit-text-stroke: 5px #ff9800;
+  z-index: -1;
+}
+
+.navbar-buttons {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.navbar-btn {
+  border: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 20px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-btn.primary {
+  background-color: #ff9800;
+  color: white;
+}
+
+.navbar-btn.primary:hover {
+  background-color: #fb8c00;
+}
+
+.navbar-btn.secondary {
+  background-color: white;
+  color: #2196f3;
+  border: 2px solid #2196f3;
+}
+
+.navbar-btn.secondary:hover {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+
+/* Cards */
 .card-slot {
     width: 20px;
     height: 15rem;
@@ -15,8 +86,6 @@
     border-radius: 4px;
     margin: auto;
     border: 2px solid #66b3dd;
-
-    /* Nuovi stili per il simbolo '+' */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -26,7 +95,7 @@
 }
 .small-card {
   width: 6rem;
-  height: 6rem; /* altezza fissa */
+  height: 6rem; 
   background-color: #cceeff;
   border: 1px solid #007bff;
   border-radius: 8px;
@@ -36,9 +105,9 @@
 }
 
 .small-card img {
-  height: 5rem;         /* fissa l’altezza dell'immagine */
-  width: 100%;          /* riempi tutta la larghezza */
-  object-fit: cover;    /* ritaglia e centra */
+  height: 5rem;         
+  width: 100%;          
+  object-fit: cover;    
 }
 
 .slot-button .inner-slot {
@@ -75,7 +144,7 @@
     font-size: 3rem;
     color: #2c3e50;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem; /* circa mb-4 */
+    margin-bottom: 1.5rem; 
 }
 
 .highlight {
@@ -86,7 +155,7 @@
     font-weight: 500;
     letter-spacing: 0.05em;
     color: #555;
-    margin-bottom: 3rem; /* circa mb-5 */
+    margin-bottom: 3rem; 
 }
 
 .welcome-buttons {
@@ -97,7 +166,7 @@
 .welcome-btn-login {
     min-width: 140px;
     font-weight: 600;
-    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.075); /* shadow-sm */
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.075); 
 }
 
 .welcome-btn-login:hover {
@@ -117,6 +186,21 @@
 
 
 /* Stile for: Start Page */
+/* "User Games Overview */
+.section-title {
+  font-family: 'Fredoka', 'Segoe UI', sans-serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  text-align: center;
+}
 .start-container {
   padding: 40px 20px;
   min-height: 80vh;
@@ -174,7 +258,7 @@
 
 
 
-/* profile page */
+/* Profile page */
 .profile-container {
     max-width: 1200px;
     margin: auto;
@@ -247,10 +331,10 @@
 }
 
 
-/* No Games yet - Profile page */
+/* Profile page - No Games yet  */
 .no-games-message {
   text-align: center;
-  margin-top: 2.5rem; /* aumentato per abbassare tutto */
+  margin-top: 2.5rem; 
   min-height: 200px;
   display: flex;
   flex-direction: column;
@@ -263,13 +347,13 @@
   font-weight: 800;
   font-size: 2.5rem;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-  margin-top: 0.7rem; /* aggiunto margine sopra per abbassare */
+  margin-top: 0.7rem; 
   margin-bottom: 0.3rem;
 }
 
 .no-games-subtitle {
   color: #fdba74;
   font-size: 1.5rem;
-  margin-top: 0.5rem; /* aggiunto margine sopra per abbassare */
+  margin-top: 0.5rem;
   font-weight: 700;
 }

@@ -4,46 +4,39 @@ import { useNavigate, useLocation } from 'react-router'
 
 
 function Header(props) {
-    // TODO: implementa il tasto User History
     // TODO: quando sei nella pagina di user History, dovrai poter tornare indietro alla schermata "start new game"
     // Hook to navigate between routes
     const navigate = useNavigate();
     // Hook to get the current location, used to identify the current route
     const location = useLocation();
 
+    
     return (
-        <>
-            {/* BARRA DI NAVIGAZIONE */}
-            <Navbar style={{ backgroundColor: '#2196F3' }} variant="dark" fixed="top">
-                <Container fluid>
-                    <h1 style={{ color: 'white', margin: 0 }}>Stuff Happens</h1>
-                    <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        {props.loggedIn && (
-                            <>
-                                <Button
-                                    variant="outline-light"
-                                    onClick={() => navigate('/profile')}
-                                >
-                                    Your Game History
-                                </Button>
-                                <Button
-                                    variant="outline-light"
-                                    onClick={()=>props.handleLogout()}
-                                >
-                                    Logout
-                                </Button>
-                            </>
-                        )}
-                    </div>
-                </Container>
-            </Navbar>
-
-            <div style={{ paddingTop: '70px' }}>
-                <Outlet />
+    <>
+      <Navbar className="custom-navbar" variant="dark" fixed="top">
+        <Container fluid className="navbar-container">
+          <h1 className="navbar-title">Stuff Happens</h1>
+          {props.loggedIn && (
+            <div className="navbar-buttons">
+              <Button className="navbar-btn primary" onClick={() => navigate('/profile')}>
+                Your Game History
+              </Button>
+              <Button className="navbar-btn secondary" onClick={props.handleLogout}>
+                Logout
+              </Button>
             </div>
-        </>
-    );
+          )}
+        </Container>
+      </Navbar>
+
+      <div style={{ paddingTop: '70px' }}>
+        <Outlet />
+      </div>
+    </>
+  );
 }
+
+
 
 
 export default Header;

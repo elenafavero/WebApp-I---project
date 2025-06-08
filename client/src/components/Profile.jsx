@@ -63,7 +63,7 @@ function Profile(props) {
 
     return (
         <div className="container mt-4 profile-container">
-            <h2 className="mb-4 text-center">User Games Overview</h2>
+            <h2 className="section-title text-center mb-4">User Games Overview</h2>
             {games.map(game => (
                 <div key={game.id} className="game-table-wrapper">
                     <h3 className="game-date" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
