@@ -30,13 +30,13 @@ function Welcome(props) {
             <div className="welcome-buttons">
                 <button
                     className="btn btn-warning btn-lg welcome-btn-login"
-                    onClick={() => navigate('/api/login')}
+                    onClick={() => navigate('/login')}
                 >
                     Login to Play
                 </button>
                 <button
                     className="btn btn-outline-primary btn-lg welcome-btn-demo"
-                    onClick={() => navigate('/api/start')}
+                    onClick={() => navigate('/start')}
                 >
                     Play Demo Version
                 </button>

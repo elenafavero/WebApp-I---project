@@ -7,7 +7,7 @@ function ShowResult(props) {
 
   const handleRestart = () => {
     props.resetGame();
-    navigate('/api/round/start');
+    navigate('/game');
   };
 
   const messageStyle = {

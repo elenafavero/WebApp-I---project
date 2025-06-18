@@ -38,7 +38,7 @@ function App() {
 
   // avvio del gioco
   useEffect(() => {
-    if (location.pathname !== '/api/round/start') return;
+    if (location.pathname !== '/game') return;
 
     // Solo per utenti loggati, esegui una volta sola
     if (loggedIn) {
@@ -80,7 +80,7 @@ function App() {
 
   // timer
   useEffect(() => {
-    const isGameScreen = location.pathname === '/api/round/start';
+    const isGameScreen = location.pathname === '/game';
     if (!isGameScreen || !tableCard || gameOver !== 0) return;
 
     setTimeLeft(30);
@@ -222,10 +222,10 @@ function App() {
 
 
   // ritardo di 2 secondi prima di navigare alla pagina dei risultati
-  // serve mettere: location.pathname === '/api/round/start' 
+  // serve mettere: location.pathname === '/game' 
   // -> altrimenti se dalla pagina /game/result vai a /profile, dopo 2 secondi ti avrebbe riportato di nuovo a /game/result
   useEffect(() => {
-    if ((gameOver === -1 || gameOver === 1) && location.pathname === '/api/round/start') {
+    if ((gameOver === -1 || gameOver === 1) && location.pathname === '/game') {
       const delay = setTimeout(() => {
         navigate('/game/result', { replace: true });
       }, 2000);
@@ -364,15 +364,14 @@ function App() {
           <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
 
           {/* Login */}
-          <Route path="api/login" element={loggedIn ? <Navigate replace to='/api/start' /> : <LoginForm handleLogin={handleLogin} />} />
+          <Route path="login" element={loggedIn ? <Navigate replace to='/start' /> : <LoginForm handleLogin={handleLogin} />} />
 
-          {/* Start page (+ rules)  */}
-          <Route path="api/start" element={<StartPage loggedIn={loggedIn} />} />
+          {/* Start page */}
+          <Route path="start" element={<StartPage loggedIn={loggedIn} />} />
 
           {/* Game starts */}
-          {/* TODO: cambia la route in start/round */}
           <Route
-            path="api/round/start"
+            path="game"
             element={
               loading ? (
                 <div className="custom-loader" />

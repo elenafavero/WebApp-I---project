@@ -15,7 +15,7 @@ function StartPage(props) {
           <h2 className="start-title">Are you ready to start?</h2>
           <button
             className="btn btn-primary start-button"
-            onClick={() => navigate('/api/round/start')}
+            onClick={() => navigate('/game')}
           >
             Start New Game
           </button>
@@ -39,7 +39,7 @@ function StartPage(props) {
           <h2 className="start-title">Ready to play?</h2>
           <button
             className="btn btn-primary start-button"
-            onClick={() => navigate('/api/round/start')}
+            onClick={() => navigate('/game')}
           >
             Start New Game
           </button>
