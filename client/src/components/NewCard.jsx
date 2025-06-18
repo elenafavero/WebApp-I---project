@@ -6,7 +6,7 @@ function NewCard(props) {
 
     return (
         <>
-            {/* TIMER IN ALTO A SINISTRA, MA SOTTO LA NAVBAR */}
+            {/* Timer */}
             <div style={{
                 position: 'fixed',
                 top: '80px', // sposta il timer sotto la navbar
@@ -47,7 +47,7 @@ function NewCard(props) {
             )}
 
 
-            {/* Messaggio di correttezza dell'ultima mossa fatta*/}
+            {/* Message showing the outcome of the last move made */}
             {props.lastGuessCorrect !== null && props.gameOver === 0 && (
                 <div
                     className={`feedback-message ${props.lastGuessCorrect === true
@@ -78,6 +78,7 @@ function NewCard(props) {
                         />
                         <div className="card-body d-flex flex-column justify-content-between" style={{ padding: '0.4rem' }}>
                             <p className="card-text" style={{ fontSize: '0.80rem' }}>{tableCard.description}</p>
+                            {/* TODO: Per togliere il bad luck index cancella la prossima riga */}
                             <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {tableCard.bad_luck_index}</p>
                         </div>
                     </div>

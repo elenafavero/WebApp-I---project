@@ -41,7 +41,7 @@ function StartPage(props) {
             className="btn btn-primary start-button"
             onClick={() => navigate('/game')}
           >
-            Start New Game
+            Start Round
           </button>
         </>
       )}

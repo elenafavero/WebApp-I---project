@@ -198,7 +198,7 @@ function App() {
     // da mettere per gestire correttamente un 2° round demo:
     // devi resettare lastGuessCorrect e waitForNextRound prima di impostare la nuova tableCard
     // altrimenti al 2° round demo i bottoni azzurri (per inserire la carta) rimangono inattivi, ti ritrovi
-    // "Right/wrong position" del 11° round demo nel 2° round demo e dopo 3 round giusti ti diceva "You win!"
+    // "Right/wrong position" del 1° round demo nel 2° round demo e dopo 3 round giusti ti diceva "You win!"
     if (!loggedIn) {
       setWaitForNextRound(false);
       setLastGuessCorrect(null);
@@ -295,6 +295,7 @@ function App() {
       setLoggedIn(true);
       setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
       setUser(loginUser);
+      navigate('/start');
     } catch (err) {
       setMessage({ msg: "Invalid credentials", type: 'danger' })
     }
@@ -366,7 +367,7 @@ function App() {
           <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
 
           {/* Login */}
-          <Route path="login" element={loggedIn ? <Navigate replace to='/start' /> : <LoginForm handleLogin={handleLogin} />} />
+          <Route path="login" element={ <LoginForm handleLogin={handleLogin} />} />
 
           {/* Start page */}
           <Route path="start" element={<StartPage loggedIn={loggedIn} />} />

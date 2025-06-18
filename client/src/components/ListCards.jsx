@@ -3,10 +3,6 @@ import React from 'react';
 
 
 function ListCards(props) { // cards
-    const navigate = useNavigate();
-    const location = useLocation();
-
-
 
     const cards = props.cards;
 
