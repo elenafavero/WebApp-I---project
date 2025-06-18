@@ -58,13 +58,10 @@
     - buttons for logged user: 'Your Game History' and 'Logout'.
   - an `<Outlet />` component to render child routes’ components below the navbar
 
-- `ListCards` (in `ListCards.jsx`): it renders the cards that the player owns and some buttons - contains:
+- `ListCards` (in `ListCards.jsx`): it renders the cards that the player owns - contains:
   - list of cards owned by the player
-  - buttons:
-    - for logged user: the `Next Round` button (to proceed to the next round)
-    - for demo user: the `Home page` button (to go back to home page)
-  - message:
-    - for demo user: the "Demo round finished!" message at the end of the demo round
+  - for logged user: the `Next Round` button (to proceed to the next round)
+  
 
 - `LoginForm` (in `LoginForm.jsx`): it renders the login form - contains:
   - the login form with fields for: username, password
@@ -82,9 +79,13 @@
   - if some games are found in the db: the list of games completed by the user
 
 - `Result` (in `Result.jsx`): it renders the result page at the end of the game - contains:
-  - list of cards owned by the player at the end of the game
-  - button `Start New Game` 
-  - the message "YOU WIN" or "GAME OVER"
+  - summary of won cards by the player at the end of the game (for logged users) or the round (for not logged users)
+  - for logged users:
+    - the message "YOU WIN" or "GAME OVER"
+    - button: `Start New Game`
+  - for demo user: 
+    - the "Demo round finished!" message at the end of the demo round
+    - the `Home page` button (to go back to home page)
 
 - `Welcome` (in `Welcome.jsx`): it renders the home page - contains:
   - Welcome message

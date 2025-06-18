@@ -24,9 +24,9 @@ function ShowResult(props) {
 
   return (
     <div className="container" style={{ padding: '20px', position: 'relative' }}>
-      {/* === TOP MESSAGE/BUTTON AREA === */}
       <div className="d-flex flex-column align-items-center mb-4" style={{ zIndex: 10 }}>
-        {/* === IF LOGGED IN === */}
+
+        {/* if loggedIn */}
         {props.loggedIn && (
           <>
             {props.gameOver === -1 && (
@@ -57,7 +57,7 @@ function ShowResult(props) {
           </>
         )}
 
-        {/* === IF NOT LOGGED IN === */}
+        {/* if not loggedIn */}
         {!props.loggedIn && props.gameOver !== 0 && (
           <div className="d-flex flex-column align-items-center" style={{}}>
             <div
@@ -90,7 +90,7 @@ function ShowResult(props) {
         )}
       </div>
 
-      {/* === LIST OF CARDS (always rendered) === */}
+      {/* both for logged and not logged user */}
       <ListCards
         cards={props.cards}
         onIntervalClick={props.handleIntervalClick}
