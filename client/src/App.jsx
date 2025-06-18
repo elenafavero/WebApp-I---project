@@ -156,7 +156,7 @@ function App() {
 
       setCorrectGuesses(prev => {
         const newCorrect = prev + 1;
-        if (newCorrect === 3) {
+        if (newCorrect === 3 || !loggedIn) {
           setGameOver(1); // Hai vinto
         }
         return newCorrect;
@@ -164,7 +164,7 @@ function App() {
     } else {
       setWrongGuesses(prev => {
         const newWrong = prev + 1;
-        if (newWrong >= 3) {
+        if (newWrong >= 3 || !loggedIn) {
           setGameOver(-1); // Hai perso
         }
         return newWrong;
@@ -192,7 +192,7 @@ function App() {
 
 
   async function proceedToNextRound() {
-    if (gameOver !== 0) return; // se partita finita 
+    if (gameOver !== 0 && loggedIn) return; // se partita finita 
 
 
     // da mettere per gestire correttamente un 2° round demo:
@@ -204,6 +204,7 @@ function App() {
       setLastGuessCorrect(null);
       setCorrectGuesses(0);
       setWrongGuesses(0);
+      setGameOver(0);
       navigate('/');
       return;
     }

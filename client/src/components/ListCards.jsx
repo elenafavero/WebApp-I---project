@@ -73,6 +73,7 @@ function ListCards(props) { // cards
             )}
 
             {/* LoggedIn == False: Pulsante a destra = Go back to Home Page */}
+            {/*
             {!props.loggedIn && props.waitForNextRound && props.gameOver === 0 && (
                 <div className="ms-4 d-flex flex-column align-items-center" style={{
                     position: 'absolute',
@@ -110,6 +111,7 @@ function ListCards(props) { // cards
                     </button>
                 </div>
             )}
+                */}
         </div>
     );
 }
