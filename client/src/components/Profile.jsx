@@ -41,7 +41,7 @@ function Profile(props) {
         return 'In progress';
     };
 
-
+    {/* Loading spinner */}
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
@@ -50,11 +50,12 @@ function Profile(props) {
         );
     }
 
-
+    {/* Error in fetching games */}
     if (error) {
         return <p className="text-danger text-center mt-4">Error: {error}</p>;
     }
 
+    {/* No games found in the db */}
     if (!loading && games.length === 0) {
         return (
             <div className="no-games-message">
@@ -63,9 +64,6 @@ function Profile(props) {
             </div>
         );
     }
-
-
-
 
 
 

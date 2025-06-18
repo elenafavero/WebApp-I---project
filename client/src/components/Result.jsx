@@ -25,7 +25,7 @@ function ShowResult(props) {
   return (
     <div className="container" style={{ padding: '20px' }}>
       {/* Header with result + button */}
-      <div className="d-flex flex-column align-items-center mb-4" style={{ position: 'sticky', top: '110px', zIndex: 10 }}>
+      <div className="d-flex flex-column align-items-center mb-4" style={{ top: '110px', zIndex: 10 }}>
         {props.gameOver === -1 && (
           <div
             className="alert alert-danger"
@@ -37,7 +37,7 @@ function ShowResult(props) {
               border: '1px solid #f5c6cb',
             }}
           >
-            ❌ GAME OVER
+            GAME OVER
           </div>
         )}
         {props.gameOver === 1 && (
@@ -51,7 +51,7 @@ function ShowResult(props) {
               border: '1px solid #c3e6cb',
             }}
           >
-            🎉 YOU WIN!
+            YOU WIN!
           </div>
         )}
         {props.gameOver !== 0 && (

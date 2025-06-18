@@ -23,17 +23,85 @@
 
 ## Database Tables
 
-- Table `users` - contains xx yy zz
-- Table `something` - contains ww qq ss
-- ...
+- Table `User` - contains information about each user:
+  - id
+  - username
+  - email
+  - salt
+  -saltedPassword 
+- Table `Card` - contains information about each card:
+  - id
+  - description
+  - image_url
+  - bad luck index 
+- Table `Game` - contains information about each game:
+  - id
+  - user_id: user who played the game
+  - date_created: start date of the game
+  - mistake_count: number of cards guessed incorrectly
+  - cards_won: number of cards guessed correctly
+- Table `Round` - contains information about each round of each game:
+  - id
+  - game_id: game to which the round belongs
+  - round_number: number of the round (-1 = initial cards, 0 = 1st round, 1 = second round ...)
+  - card_id: card drawn from the deck
+  - is_won: round outcome (-1 = initial cards, 0 = lost, 1 = won)
+
 
 ## Main React Components
 
 - `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
 
-(only _main_ components, minor ones may be skipped)
+- `Header` (in `Header.jsx`): it renders the Navbar - contains:
+  - a `<Navbar />` component with: 
+    - the game title ('Stuff happens')
+    - buttons for logged user: 'Your Game History' and 'Logout'.
+  - an `<Outlet />` component to render child routes’ components below the navbar
+
+- `ListCards` (in `ListCards.jsx`): it renders the cards that the player owns and some buttons - contains:
+  - list of cards owned by the player
+  - buttons:
+    - for logged user: the `Next Round` button (to proceed to the next round)
+    - for demo user: the `Home page` button (to go back to home page)
+  - message:
+    - for demo user: the "Demo round finished!" message at the end of the demo round
+
+- `LoginForm` (in `LoginForm.jsx`): it renders the login form - contains:
+  - the login form with fields for: username, password
+  - buttons: `Cancel` and `Login` to go back to the home page and log in, respectively
+
+- `NewCard` (in `NewCard.jsx`): it renders the new card drawn from the deck - contains:
+  - the new card
+  - the timer
+  - a loading spinner with the message "Waiting for result..." when the game ends
+  - a message showing the outcome of the last move made (correct/wrong position or timer expired)
+
+- `Profile` (in `Profile.jsx`): it renders the profile page of the user - contains:
+  - a loading spinner while games are being fetched from the database
+  - if no games are found in the db: the message "No games yet!" 
+  - if some games are found in the db: the list of games completed by the user
+
+- `Result` (in `Result.jsx`): it renders the result page at the end of the game - contains:
+  - list of cards owned by the player at the end of the game
+  - button `Start New Game` 
+  - the message "YOU WIN" or "GAME OVER"
+
+- `Welcome` (in `Welcome.jsx`): it renders the home page - contains:
+  - Welcome message
+  - buttons: `Login to play` and `Play Demo Version`
+
+- `StartPage` (in `StartPage.jsx`): it renders the start page - contains:
+  - if logged in:
+    - message: "Are you ready to start?"
+    - button: `Start New Game`
+  - if demo version:
+    - the game rules
+    - message: "Ready to play?"
+    - button: `Start New Game`
+
+
+
+
 
 ## Screenshot
 
@@ -41,5 +109,5 @@
 
 ## Users Credentials
 
-- username, password (plus any other requested info)
-- username, password (plus any other requested info)
+- faveroelena2@gmail.co, CasaBlu
+- mariobros@gmail.com, RagnoViola

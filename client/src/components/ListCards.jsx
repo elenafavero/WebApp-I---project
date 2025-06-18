@@ -94,7 +94,7 @@ function ListCards(props) { // cards
                             maxWidth: '300px',
                         }}
                     >
-                        🎉 Demo round finished! <br />
+                        Demo round finished! <br />
                         <span style={{ fontWeight: 600 }}>Log in</span> to unlock the full game experience!
                     </div>
 

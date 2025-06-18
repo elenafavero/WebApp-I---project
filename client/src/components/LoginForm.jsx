@@ -47,6 +47,7 @@ function LoginForm(props) {
             isInvalid={!!state.error}
           />
         </Form.Group>
+        
 
         {state.error && <Alert variant="danger" className="text-center">{state.error}</Alert>}
 

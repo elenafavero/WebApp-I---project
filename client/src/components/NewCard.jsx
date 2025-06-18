@@ -46,7 +46,6 @@ function NewCard(props) {
                 </div>
             )}
 
-            {/* TODO: se timer expired e sbagli per quello, scrivi "timer expired" non wrogn position */}
 
             {/* Messaggio di correttezza dell'ultima mossa fatta*/}
             {props.lastGuessCorrect !== null && props.gameOver === 0 && (
@@ -67,7 +66,7 @@ function NewCard(props) {
             )}
 
 
-
+            {/* New card */}
             <div className="container d-flex flex-column justify-content-center align-items-center" style={{ padding: '20px' }}>
                 {tableCard && (
                     <div className="card" style={{ width: '12rem', height: '15rem' }}>
