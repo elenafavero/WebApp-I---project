@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { getRandomCard, getThreeRandomCards, getRandomCardExcluding, postGameWithRounds, getUserGames } from './dao/dao.mjs';
+import { getThreeRandomCards, getRandomCardExcluding, postGameWithRounds, getUserGames, checkUserExists } from './dao/dao.mjs';
 
 import { check, validationResult } from 'express-validator';
 import passport from 'passport';
@@ -147,20 +147,33 @@ app.post('/api/game', async (req, res) => {
   }
 });
 
+// GIUSTO
+/*
+- 404 Not Found { "error": "Utente non trovato" }
+- 500 Internal Server Error { "error": "Internal Server Error" }
+*/
+app.get('/api/users/:userId/games', isLoggedIn, [
+  check('userId').isInt().withMessage('User ID must be an integer')
+], async (req, res) => {
 
-app.get('/api/users/:userId/games', async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+
   const userId = req.params.userId;
-
   if (!userId) {
     return res.status(400).json({ error: "User ID is required" });
   }
-
   try {
-    const games = await getUserGames(userId);
-    res.json(games);
+    const userExists = await checkUserExists(userId);
+    if (!userExists) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const result = await getUserGames(userId);
+    res.status(200).json(result);
   } catch (err) {
-    console.error("Error fetching user games:", err);
-    res.status(500).json({ error: "Errore nel recupero dei giochi" });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

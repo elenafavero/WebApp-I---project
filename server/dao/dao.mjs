@@ -86,7 +86,15 @@ export async function postGameWithRounds(userId, mistakeCount, cardsWonCount, ro
   });
 }
 
-
+export function checkUserExists(userId) {
+  return new Promise((resolve, reject) => {
+    const sql = `SELECT 1 FROM User WHERE id = ? LIMIT 1`;
+    db.get(sql, [userId], (err, row) => {
+      if (err) return reject(err);
+      resolve(!!row); // true se esiste, false altrimenti
+    });
+  });
+}
 
 export function getUserGames(userId) {
   return new Promise((resolve, reject) => {
@@ -102,6 +110,7 @@ export function getUserGames(userId) {
     `;
 
     db.all(sql, [userId], (err, rows) => {
+      // query fallita
       if (err) {
         return reject(err);
       }
@@ -138,32 +147,7 @@ export function getUserGames(userId) {
 }
 
 
-////////////////
 
-
-export const getRandomCard = () => {
-  return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM Card ORDER BY RANDOM() LIMIT 1`;
-    db.get(sql, [], (err, row) => {
-      if (err)
-        reject(err);
-      else
-        resolve(new Card(row.description, row.image_url, row.bad_luck_index));
-    });
-  });
-};
-
-
-export const getCardById = (id) => {
-  return new Promise((resolve, reject) => {
-    const sql = `SELECT * FROM Card WHERE id = ?`;
-    db.get(sql, [id], (err, row) => {
-      if (err) reject(err);
-      else if (!row) resolve(null);
-      else resolve(new Card(row.description, row.image_url, row.bad_luck_index));
-    });
-  });
-};
 
 
 

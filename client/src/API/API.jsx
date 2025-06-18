@@ -109,11 +109,12 @@ async function saveGameToDB(gameData) {
 }
 
 
+// GIUSTO 
 async function fetchUserGames(userId) {
     try {
         const response = await fetch(`${URI}/users/${userId}/games`);
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`Application error: ${response.status}`);
         }
         const data = await response.json();
         return data;
