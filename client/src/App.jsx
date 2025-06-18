@@ -354,6 +354,8 @@ function App() {
         </div>
       )}
 
+      
+      {/* CLIENT ROUTES */}
       <Routes>
         <Route
           path="/"

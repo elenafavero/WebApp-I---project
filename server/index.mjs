@@ -72,7 +72,7 @@ app.use(passport.authenticate('session'));
 
 
 
-/* ROUTES */
+/* SERVER ROUTES */
 
 
 app.post('/api/login', function (req, res, next) {
@@ -95,7 +95,14 @@ app.post('/api/login', function (req, res, next) {
 });
 
 
-app.get('/api/round/exclude', (req, res) => {
+app.post('/api/logout', (req, res) => {
+  req.logout(() => {
+    res.end();
+  });
+});
+
+
+app.get('/api/cards/1', (req, res) => {
   const excludeIds = (req.query.exclude || '').split(',').map(id => parseFloat(id)).filter(id => !isNaN(id));
 
   getRandomCardExcluding(excludeIds)
@@ -104,7 +111,7 @@ app.get('/api/round/exclude', (req, res) => {
 });
 
 
-app.get('/api/round/start', (req, res) => {
+app.get('/api/cards/3', (req, res) => {
 
   getThreeRandomCards()
     .then(cards => res.json(cards))
@@ -112,7 +119,7 @@ app.get('/api/round/start', (req, res) => {
 });
 
 
-
+/*
 app.get('/api/session/current', (req, res) => {
   if (req.isAuthenticated()) {
     res.json(req.user);  // user is stored in the session by passport
@@ -120,14 +127,10 @@ app.get('/api/session/current', (req, res) => {
     res.status(401).json({ error: 'Not authenticated' });
   }
 });
+*/
 
-app.post('/api/logout', (req, res) => {
-  req.logout(() => {
-    res.end();
-  });
-});
 
-app.post('/api/game/save', async (req, res) => {
+app.post('/api/game', async (req, res) => {
   const userId = req.user?.id;
   const { rounds, mistakeCount, cardsWonCount } = req.body;
 

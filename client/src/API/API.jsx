@@ -4,47 +4,6 @@ const URI = "http://localhost:3001/api"
 
 
 
-async function getRandomCardExcluding(excludeIds = []) {
-    try {
-        const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
-
-        const response = await fetch(`${URI}/round/exclude${queryString}`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            const card = await response.json();
-            return new Card(card.id, card.description, card.imageUrl, card.bad_luck_index);
-        } else {
-            throw new Error("API error: " + response.status);
-        }
-    } catch (error) {
-        throw new Error("Network error: " + error.message);
-    }
-}
-
-
-
-
-
-
-// get 3 cards randomly
-async function getThreeRandomCards() {
-    try {
-        const response = await fetch(`${URI}/round/start`, {
-            credentials: 'include'
-        });
-        if (response.ok) {
-            const cards = await response.json();
-            return cards.map(card => new Card(card.id, card.description, card.imageUrl, card.bad_luck_index));
-        } else {
-            throw new Error("API error: " + response.status);
-        }
-    } catch (error) {
-        throw new Error("Network error in getting three random cards: " + error);
-    }
-}
-
-
 async function logIn(credentials) {
     const bodyObject = {
         email: credentials.email,
@@ -78,6 +37,50 @@ async function logout() {
 }
 
 
+async function getRandomCardExcluding(excludeIds = []) {
+    try {
+        const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
+
+        const response = await fetch(`${URI}/cards/1${queryString}`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            const card = await response.json();
+            return new Card(card.id, card.description, card.imageUrl, card.bad_luck_index);
+        } else {
+            throw new Error("API error: " + response.status);
+        }
+    } catch (error) {
+        throw new Error("Network error: " + error.message);
+    }
+}
+
+
+
+
+
+
+// get 3 cards randomly
+async function getThreeRandomCards() {
+    try {
+        const response = await fetch(`${URI}/cards/3`, {
+            credentials: 'include'
+        });
+        if (response.ok) {
+            const cards = await response.json();
+            return cards.map(card => new Card(card.id, card.description, card.imageUrl, card.bad_luck_index));
+        } else {
+            throw new Error("API error: " + response.status);
+        }
+    } catch (error) {
+        throw new Error("Network error in getting three random cards: " + error);
+    }
+}
+
+
+
+
+/*
 async function getCurrentUser() {
     const res = await fetch(URI + '/session/current', {
         credentials: 'include'
@@ -86,11 +89,11 @@ async function getCurrentUser() {
     if (!res.ok) throw new Error("Not authenticated");
     return res.json();
 }
-
+*/
 
 
 async function saveGameToDB(gameData) {
-    const response = await fetch(`${URI}/game/save`, {
+    const response = await fetch(`${URI}/game`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -145,4 +148,4 @@ async function validateInterval(start_index, end_index, table_index ) {
 
 
 
-export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, getCurrentUser, saveGameToDB, getUserGames, validateInterval};
+export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, getUserGames, validateInterval};
