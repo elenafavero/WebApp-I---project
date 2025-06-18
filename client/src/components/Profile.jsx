@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getUserGames } from '../API/API';
+import { fetchUserGames } from '../API/API';
 import Badge from 'react-bootstrap/Badge';
 import '../App.css';
 
@@ -20,7 +20,7 @@ function Profile(props) {
         async function fetchGames() {
             try {
                 setLoading(true);
-                const userGames = await getUserGames(userId);
+                const userGames = await fetchUserGames(userId);
                 userGames.sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
                 setGames(userGames);
                 setError(null);

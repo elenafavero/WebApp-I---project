@@ -37,7 +37,7 @@ async function logout() {
 }
 
 
-async function getRandomCardExcluding(excludeIds = []) {
+async function fetchRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
 
@@ -61,7 +61,7 @@ async function getRandomCardExcluding(excludeIds = []) {
 
 
 // get 3 cards randomly
-async function getThreeRandomCards() {
+async function fetchThreeRandomCards() {
     try {
         const response = await fetch(`${URI}/cards/3`, {
             credentials: 'include'
@@ -109,7 +109,7 @@ async function saveGameToDB(gameData) {
 }
 
 
-async function getUserGames(userId) {
+async function fetchUserGames(userId) {
     try {
         const response = await fetch(`${URI}/users/${userId}/games`);
         if (!response.ok) {
@@ -148,4 +148,4 @@ async function validateInterval(start_index, end_index, table_index ) {
 
 
 
-export { getRandomCardExcluding, getThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, getUserGames, validateInterval};
+export { fetchRandomCardExcluding, fetchThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, fetchUserGames, validateInterval};

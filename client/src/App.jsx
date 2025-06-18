@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getThreeRandomCards, getRandomCardExcluding, saveGameToDB, validateInterval } from './API/API';
+import { fetchThreeRandomCards, fetchRandomCardExcluding, saveGameToDB, validateInterval } from './API/API';
 import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router';
 import ListCards from './components/ListCards';
 import Welcome from './components/Welcome';
@@ -49,9 +49,9 @@ function App() {
     async function startGame() {
       try {
         setLoading(true); // <-- INIZIO CARICAMENTO
-        const initialCards = await getThreeRandomCards();
+        const initialCards = await fetchThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
-        const newTableCard = await getRandomCardExcluding(excludeIds);
+        const newTableCard = await fetchRandomCardExcluding(excludeIds);
 
         setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
         setTableCard(newTableCard);
@@ -214,7 +214,7 @@ function App() {
     setLastGuessCorrect(null);
 
     const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
-    const newCard = await getRandomCardExcluding(excludeIds);
+    const newCard = await fetchRandomCardExcluding(excludeIds);
 
     setTableCard(newCard);
     setWaitForNextRound(false);
@@ -272,9 +272,9 @@ function App() {
 
     hasInitialized.current = false; // Resetta l'inizializzazione
 
-    const initialCards = await getThreeRandomCards();
+    const initialCards = await fetchThreeRandomCards();
     const excludeIds = initialCards.map(c => c.bad_luck_index);
-    const newTableCard = await getRandomCardExcluding(excludeIds);
+    const newTableCard = await fetchRandomCardExcluding(excludeIds);
 
     setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
     setRoundHistory(

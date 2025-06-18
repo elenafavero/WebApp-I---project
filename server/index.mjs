@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { getRandomCard, getThreeRandomCards, getRandomCardExcluding, insertGameWithRounds, getUserGamesFromDb } from './dao/dao.mjs';
+import { getRandomCard, getThreeRandomCards, getRandomCardExcluding, postGameWithRounds, getUserGames } from './dao/dao.mjs';
 
 import { check, validationResult } from 'express-validator';
 import passport from 'passport';
@@ -139,7 +139,7 @@ app.post('/api/game', async (req, res) => {
   }
 
   try {
-    const gameId = await insertGameWithRounds(userId, mistakeCount, cardsWonCount, rounds);
+    const gameId = await postGameWithRounds(userId, mistakeCount, cardsWonCount, rounds);
     res.status(201).json({ gameId });
   } catch (err) {
     console.error("Error saving game:", err);
@@ -156,7 +156,7 @@ app.get('/api/users/:userId/games', async (req, res) => {
   }
 
   try {
-    const games = await getUserGamesFromDb(userId);
+    const games = await getUserGames(userId);
     res.json(games);
   } catch (err) {
     console.error("Error fetching user games:", err);

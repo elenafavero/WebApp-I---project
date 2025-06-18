@@ -41,7 +41,7 @@ export const getThreeRandomCards = async () => {
 
 
 
-export async function insertGameWithRounds(userId, mistakeCount, cardsWonCount, rounds) {
+export async function postGameWithRounds(userId, mistakeCount, cardsWonCount, rounds) {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       db.run('BEGIN TRANSACTION');
@@ -88,7 +88,7 @@ export async function insertGameWithRounds(userId, mistakeCount, cardsWonCount, 
 
 
 
-export function getUserGamesFromDb(userId) {
+export function getUserGames(userId) {
   return new Promise((resolve, reject) => {
     const sql = `
       SELECT G.id AS game_id, G.date_created, G.mistake_count, G.cards_won_count,
