@@ -13,7 +13,7 @@
 
 ## API Server
 
-- POST `/api/something`
+- POST `/api/login`
   - request parameters and request body content
   - response body content
 - GET `/api/something`
