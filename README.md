@@ -78,7 +78,7 @@
   - if no games are found in the db: the message "No games yet!" 
   - if some games are found in the db: the list of games completed by the user
 
-- `Result` (in `Result.jsx`): it renders the result page at the end of the game - contains:
+- `ShowResult` (in `Result.jsx`): it renders the result page at the end of the game - contains:
   - summary of won cards by the player at the end of the game (for logged users) or the round (for not logged users)
   - for logged users:
     - the message "YOU WIN" or "GAME OVER"

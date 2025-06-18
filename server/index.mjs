@@ -72,6 +72,9 @@ app.use(passport.authenticate('session'));
 
 
 
+/* ROUTES */
+
+
 app.post('/api/login', function (req, res, next) {
   passport.authenticate('local', (err, user, info) => {
     if (err)
@@ -91,7 +94,6 @@ app.post('/api/login', function (req, res, next) {
   })(req, res, next);
 });
 
-/* ROUTES */
 
 app.get('/api/round/exclude', (req, res) => {
   const excludeIds = (req.query.exclude || '').split(',').map(id => parseFloat(id)).filter(id => !isNaN(id));
