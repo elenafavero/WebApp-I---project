@@ -19,22 +19,20 @@ const UPPER_BOUND = 101;
 function App() {
   const [cards, setCards] = useState([]);
   const [error, setError] = useState(null);
-  const [tableCard, setTableCard] = useState(null); // carta sul tavolo
+  const [tableCard, setTableCard] = useState(null);                    // new card to guess
   const [round, setRound] = useState(-1);
   const [correctGuesses, setCorrectGuesses] = useState(0);
   const [wrongGuesses, setWrongGuesses] = useState(0);
-  const [gameOver, setGameOver] = useState(0); // 0 = in corso, 1 = vinto, -1 = perso
-  const [lastGuessCorrect, setLastGuessCorrect] = useState(null); // true/false/null
+  const [gameOver, setGameOver] = useState(0);                         // 0 = in progress, 1 = won, -1 = lost
+  const [lastGuessCorrect, setLastGuessCorrect] = useState(null);      // true/false/null
   const [roundHistory, setRoundHistory] = useState([]);
   const [timeLeft, setTimeLeft] = useState(30);
-  const [waitForNextRound, setWaitForNextRound] = useState(false);
+  const [waitForNextRound, setWaitForNextRound] = useState(false);     // true if the round is the round is finished and the user has to click to continue
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null); // già usata nel login/logout
-  const [loading, setLoading] = useState(false);
-  // Usa un contenitore per il messaggio posizionato in modo assoluto in alto al centro
-  // Mostra il messaggio per pochi secondi e poi lo nasconde automaticamente con dissolvenza
-  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState(null);                        // Message for Login, Logout and Welcome
+  const [loading, setLoading] = useState(false);                       // Used for Loading Spinner
+  const [showMessage, setShowMessage] = useState(false);               // Used to show/hide the message with fade out effect
 
 
   const navigate = useNavigate();
@@ -42,11 +40,11 @@ function App() {
   const hasInitialized = useRef(false);
 
 
-  // avvio del gioco
+  // game start
   useEffect(() => {
     if (location.pathname !== '/game') return;
 
-    // Solo per utenti loggati, esegui una volta sola
+    // for logged user, do it just for the first round
     if (loggedIn) {
       if (hasInitialized.current) return;
       hasInitialized.current = true;
@@ -86,8 +84,8 @@ function App() {
 
   // timer
   useEffect(() => {
-    const isGameScreen = location.pathname === '/game';
-    if (!isGameScreen || !tableCard || gameOver !== 0) return;
+    const isGamePage = location.pathname === '/game';
+    if (!isGamePage || !tableCard || gameOver !== 0) return;
 
     setTimeLeft(30);
 
@@ -111,7 +109,7 @@ function App() {
         timerRef.current = null;
       }
     };
-  }, [tableCard, gameOver, location.pathname]); // NOTA: location.pathname incluso qui
+  }, [tableCard, gameOver, location.pathname]);
 
 
 
@@ -139,7 +137,7 @@ function App() {
 
 
 
-
+  // isTimeOut: true if the user has not clicked on the card in time
   function handleGuess(takeCard, isTimeout = false) {
     if (gameOver !== 0 || waitForNextRound) return;
 
@@ -159,7 +157,7 @@ function App() {
       setCorrectGuesses(prev => {
         const newCorrect = prev + 1;
         if (newCorrect === 3 || !loggedIn) {
-          setGameOver(1); // Hai vinto
+          setGameOver(1); // you win
         }
         return newCorrect;
       });
@@ -167,18 +165,18 @@ function App() {
       setWrongGuesses(prev => {
         const newWrong = prev + 1;
         if (newWrong >= 3 || !loggedIn) {
-          setGameOver(-1); // Hai perso
+          setGameOver(-1); // you lose
         }
         return newWrong;
       });
     }
 
-    setWaitForNextRound(true); // aspetta il click prima di continuare
+    setWaitForNextRound(true);
 
 
     if (!loggedIn) return;
 
-    // aggiungi la carta alla storia del game
+    // add the round to the game history
     setRoundHistory(prev => [
       ...prev,
       {
@@ -196,11 +194,7 @@ function App() {
   async function proceedToNextRound() {
     if (gameOver !== 0 && loggedIn) return; // se partita finita 
 
-
-    // da mettere per gestire correttamente un 2° round demo:
-    // devi resettare lastGuessCorrect e waitForNextRound prima di impostare la nuova tableCard
-    // altrimenti al 2° round demo i bottoni azzurri (per inserire la carta) rimangono inattivi, ti ritrovi
-    // "Right/wrong position" del 1° round demo nel 2° round demo e dopo 3 round giusti ti diceva "You win!"
+    // to be added in order to properly handle subsequent demo rounds
     if (!loggedIn) {
       setWaitForNextRound(false);
       setLastGuessCorrect(null);
@@ -226,9 +220,7 @@ function App() {
   }
 
 
-  // ritardo di 2 secondi prima di navigare alla pagina dei risultati
-  // serve mettere: location.pathname === '/game' 
-  // -> altrimenti se dalla pagina /game/result vai a /profile, dopo 2 secondi ti avrebbe riportato di nuovo a /game/result
+  // 2‑second delay before navigating to the results page
   useEffect(() => {
     if ((gameOver === -1 || gameOver === 1) && location.pathname === '/game') {
       const delay = setTimeout(() => {
@@ -240,30 +232,25 @@ function App() {
   }, [gameOver, navigate, location]);
 
 
-  // Accumulare i dati di ogni game 
+  // Store game information at the end of the game
   useEffect(() => {
     if (gameOver !== 0 && loggedIn && user) {
-      // save round in the db
+      const saveGame = async () => {
+        const gameData = {
+          rounds: roundHistory,
+          mistakeCount: wrongGuesses,
+          cardsWonCount: correctGuesses,
+        };
 
-      const gameData = {
-        rounds: roundHistory,
-        mistakeCount: wrongGuesses,
-        cardsWonCount: correctGuesses,
+        try {
+          await saveGameToDB(gameData);
+        } catch (err) {
+          console.error("Errore nel salvataggio del game:", err);
+          setError('Error during saving game');
+        }
       };
 
-      // TODO:
-      /*
-        try {
-        await saveGameToDB(gameData);
-      } catch (err) {
-        console.error("Errore nel salvataggio del game:", err);
-        setError('Error during saving game');
-      }
-      */
-      saveGameToDB(gameData).catch(err => {
-        console.error("Errore nel salvataggio del game:", err);
-      });
-
+      saveGame(); 
     }
   }, [gameOver, loggedIn]);
 
@@ -277,7 +264,7 @@ function App() {
 
 
 
-  // Reset del gioco dopo ogni game concluso
+  // game reset after every game end
   const resetGame = async () => {
     setLastGuessCorrect(null);
     setWaitForNextRound(false);
@@ -289,7 +276,7 @@ function App() {
     setCards([]);
     setTableCard(null);
 
-    hasInitialized.current = false; // Resetta l'inizializzazione
+    hasInitialized.current = false; 
 
     try {
       const initialCards = await fetchThreeRandomCards();
@@ -320,16 +307,13 @@ function App() {
       setUser(loginUser);
       navigate('/start');
     } catch (errs) {
-      // check if there are validation errors
       const validationErrors = errs.filter(e =>
         e.msg === 'The email must be a valid email address' ||
         e.msg === 'The password cannot be empty'
       );
       if (validationErrors.length > 0) {
-        // Show the first validation error
         setError(validationErrors[0].msg);
       } else {
-        // Show the generic error "Invalid credentials"
         setError('Invalid credentials');
       }
     }

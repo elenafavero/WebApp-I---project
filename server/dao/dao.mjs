@@ -68,7 +68,6 @@ export async function postGameWithRounds(userId, date, mistakeCount, cardsWonCou
           let i = 0;
           for (const round of rounds) {
             const isWon = (i < 3) ? -1 : (round.result === 'won' ? 1 : 0);
-            console.log("round: ", round);
             stmt.run(gameId, round.round, round.card.id, isWon);
             i++;
           }

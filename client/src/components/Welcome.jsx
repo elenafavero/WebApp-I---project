@@ -10,12 +10,7 @@ function Welcome(props) {
 
     useEffect(() => {
         if (props.loggedIn) {
-            // Se l'utente è loggato e si trova su Welcome, facciamo logout o redirect
-            // Se vuoi solo fare logout:
             props.handleLogout();
-
-            // oppure se vuoi solo redirect senza logout:
-            // navigate('/api/start', { replace: true });
         }
     }, [props.loggedIn, props.handleLogout, navigate]);
 

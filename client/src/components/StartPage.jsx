@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router';
-import React, { useEffect } from 'react';
 
 import '../App.css';
 

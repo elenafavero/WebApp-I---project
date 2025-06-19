@@ -8,7 +8,7 @@ function NewCard(props) {
             {/* Timer */}
             <div style={{
                 position: 'fixed',
-                top: '80px', // sposta il timer sotto la navbar
+                top: '80px', 
                 left: '20px',
                 backgroundColor: '#fff3cd',
                 padding: '10px 15px',
