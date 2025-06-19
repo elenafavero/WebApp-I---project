@@ -33,7 +33,7 @@ async function logIn(credentials) {
             throw [{ msg: "Unknown error: " + err }];
         }
     } catch (error) {
-        throw new Error("Failed toLog In: " + error.message);
+        throw error;
     }
 }
 

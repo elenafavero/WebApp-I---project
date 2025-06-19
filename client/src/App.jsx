@@ -32,6 +32,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState(null); // già usata nel login/logout
   const [loading, setLoading] = useState(false);
+  // Usa un contenitore per il messaggio posizionato in modo assoluto in alto al centro
+  // Mostra il messaggio per pochi secondi e poi lo nasconde automaticamente con dissolvenza
+  const [showMessage, setShowMessage] = useState(false);
 
 
   const navigate = useNavigate();
@@ -272,7 +275,6 @@ function App() {
     }
   }, [error]);
 
-  if (error) return <div className="alert alert-danger mt-4">{error}</div>;
 
 
   // Reset del gioco dopo ogni game concluso
@@ -347,9 +349,7 @@ function App() {
     }
   }
 
-  // Usa un contenitore per il messaggio posizionato in modo assoluto in alto al centro
-  // Mostra il messaggio per pochi secondi e poi lo nasconde automaticamente con dissolvenza
-  const [showMessage, setShowMessage] = useState(false);
+
 
   useEffect(() => {
     if (message) {
@@ -387,6 +387,12 @@ function App() {
         </div>
       )}
 
+      {error && (
+        <div className="alert alert-danger mt-4" style={{ position: 'fixed', top: '90px', zIndex: 999 }}>
+          {error}
+        </div>
+      )}
+
 
       {/* CLIENT ROUTES */}
       <Routes>
@@ -412,7 +418,7 @@ function App() {
                 <div className="custom-loader" />
               ) : (
                 <>
-                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} loggedIn = {loggedIn} />
+                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} loggedIn={loggedIn} />
                   <ListCards
                     cards={cards}
                     onIntervalClick={handleIntervalClick}
