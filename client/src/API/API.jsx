@@ -112,6 +112,7 @@ async function getCurrentUser() {
 
 // GIUSTO 
 async function saveGameToDB(gameData) {
+    console.log(JSON.stringify({ date: new Date().toISOString(), rounds: gameData.rounds, mistakeCount: gameData.mistakeCount, cardsWonCount: gameData.cardsWonCount }));
     try {
         const response = await fetch(`${URI}/game`, {
             method: 'POST',

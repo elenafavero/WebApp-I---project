@@ -80,7 +80,8 @@ app.use(passport.authenticate('session'));
 /*
 422 Unprocessable Entity
 401 Invalid credentials
-201 Created: invia i dati dell’utente autenticato
+201 Created: returns user informations
+500 Internal Server Error
 */
 app.post('/api/login', [
   check('email').isEmail().withMessage('The email must be a valid email address'),
@@ -107,11 +108,15 @@ app.post('/api/login', [
 });
 
 
+/*
+201 Created
+500 Internal Server Error
+*/
 app.post('/api/logout', (req, res) => {
   req.logout(err => {
     if (err) 
       return next(err);
-    res.end();
+    res.status(201).end();
   });
 });
 
@@ -160,8 +165,8 @@ app.get('/api/cards/1', [
 });
 
 /*
-200
-500
+200 OK
+500 Internal Server Error
 */
 app.get('/api/cards/3', async (req, res) => {
   try {
@@ -218,13 +223,12 @@ app.post('/api/game', isLoggedIn, [
 
 
 
-// GIUSTO
 /*
-- 400 Bad Request { "error": "User ID is required" }
-- 401 Unauthorized { "error": "Not authorized" }
-- 404 Not Found { "error": "User not found" }
-- 422 Unprocessable Entity { "errors": [{ "msg": "User ID must be an integer" }] }
-- 500 Internal Server Error { "error": "Internal Server Error" }
+- 400 Bad Request
+- 401 Unauthorized
+- 404 Not Found 
+- 422 Unprocessable Entity 
+- 500 Internal Server Error 
 */
 app.get('/api/users/:userId/games', isLoggedIn, [
   check('userId').isInt().withMessage('User ID must be an integer')
@@ -281,6 +285,13 @@ app.post('/api/round/guess', [
   }
 });
 
+
+
+// TODO: Gestione globale degli errori (ti gestisce quelli che non hai gestito in modo manuale)
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
 
 

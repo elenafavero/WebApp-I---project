@@ -13,16 +13,283 @@
 
 ## API Server
 
-- POST `/api/login`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+### POST `/api/login`
+  Authenticates a user using email and password.
+  If credentials are valid it returns user info  otherwise, returns an error.
+
+- **Request body:**  email and password of the user logging in.
+  ```json
+  {
+    "email": "faveroelena2@gmail.com",
+    "password": "CasaBlu"
+  }
+  ```
+- **Response body:**  `201 CREATED`: success. Returns a JSON object, contining the user informations. 
+  ```json
+  {
+    "id": 1,
+    "email": "faveroelena2@gmail.com",
+    "name": "Elena"
+  }
+  ```
+- **Error codes:**
+  - `401 UNAUTHORIZED`: the credentials are invalid.
+  - `422 UNPROCESSABLE ENTITY`: the request is not in the specified format.
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+### POST `/api/logout`
+  Logs out the current logged in user.
+  - **Request body:**  Empty body.
+  - **Response body:**  `201 CREATED`: success. Empty body.
+  - **Error codes:**
+    - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+### GET `/api/cards/1`
+  Returns a new card for the round, excluding cards that have already been drawn previously.
+- **Request body:**  Empty body
+- **Query parameters:** exclude='1,2,3' (It excludes cards with ids 1, 2, and 3 from the pool of cards available to draw a new card from)
+- **Response body:**  `200 OK`: success. Returns a JSON object, contining the new card informations. 
+  ```json
+  {
+    "id": 28,
+    "description": "You miss your flight by minutes",
+    "imageUrl": "/images/missed_flight.jpg",
+    "bad_luck_index": 43
+  }
+  ```
+- **Error codes:**
+  - `422 UNPROCESSABLE ENTITY`: the request is not in the specified format.
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+### GET `/api/cards/3`
+  Returns the three cards that appear at the beginning of the game.
+- **Request body:**  Empty body
+- **Response body:**  `200 OK`: success. Returns an array of JSON object, each one representing a card with its informations.
+  ```json
+  [
+      {
+          "id": 45,
+          "description": "You discover your credit card is blocked",
+          "imageUrl": "/images/blocked_card.jpg",
+          "bad_luck_index": 81
+      },
+      {
+          "id": 49,
+          "description": "You break a leg hiking a mountain",
+          "imageUrl": "/images/broken_leg.jpg",
+          "bad_luck_index": 90
+      },
+      {
+          "id": 31,
+          "description": "You drink unsafe water and get sick",
+          "imageUrl": "/images/bad_water.jpg",
+          "bad_luck_index": 53.5
+      }
+  ]
+  ```
+- **Error codes:**
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+### POST `/api/game`
+  Stores a new game in the database, including all its information and the rounds it consists of.
+
+- **Request body:**  game information, including the rounds it consists of.
+  ```json
+  {
+    "date": "2025-06-19T15:33:20.734Z",
+    "rounds": [
+      {
+        "round": -1,
+        "card": {
+          "id": 5,
+          "description": "Your room has mold infestation",
+          "imageUrl": "/images/mold_room.jpg",
+          "bad_luck_index": 6
+        },
+        "result": -1
+      },
+      {
+        "round": -1,
+        "card": {
+          "id": 20,
+          "description": "You get stuck at the airport for 12 hours",
+          "imageUrl": "/images/airport_delay.jpg",
+          "bad_luck_index": 26
+        },
+        "result": -1
+      },
+      {
+        "round": -1,
+        "card": {
+          "id": 26,
+          "description": "Your flight is overbooked and you are left behind",
+          "imageUrl": "/images/overbooked.jpg",
+          "bad_luck_index": 42
+        },
+        "result": -1
+      },
+      {
+        "round": 0,
+        "card": {
+          "id": 25,
+          "description": "You get a severe sunburn on day one",
+          "imageUrl": "/images/sunburn.jpg",
+          "bad_luck_index": 41.5
+        },
+        "result": "won"
+      },
+      {
+        "round": 1,
+        "card": {
+          "id": 3,
+          "description": "The beach is closed for maintenance",
+          "imageUrl": "/images/beach_closed.jpg",
+          "bad_luck_index": 4
+        },
+        "result": "won"
+      },
+      {
+        "round": 2,
+        "card": {
+          "id": 19,
+          "description": "You are stuck in customs for hours",
+          "imageUrl": "/images/customs_delay.jpg",
+          "bad_luck_index": 23.5
+        },
+        "result": "won"
+      }
+    ],
+    "mistakeCount": 0,
+    "cardsWonCount": 3
+  }
+  ```
+- **Response body:**  `201 CREATED`: success. Returns a JSON object, contining game id of the new game stored in the database. 
+  ```json
+  {
+    "gameId": 63
+  }
+  ```
+- **Error codes:**
+  - `400 BAD REQUEST`: Invalid data.
+  - `401 UNAUTHORIZED`: the user is not authenticated.
+  - `422 UNPROCESSABLE ENTITY`: the request is not in the specified format.
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+
+### GET `/api/users/:userId/games`
+  Retrieves the games of a specific user.
+
+- **Request body:**  empty body.
+- **Path varibles:** id of the user.
+- **Response body:**  `200 OK`: success. Returns an array of JSON objects, each one representing a game including all its information and the rounds it consists of.
+  ```json
+  [
+    {
+      "date": "2025-06-19T15:33:20.734Z",
+      "rounds": [
+        {
+          "round": -1,
+          "card": {
+            "id": 5,
+            "description": "Your room has mold infestation",
+            "imageUrl": "/images/mold_room.jpg",
+            "bad_luck_index": 6
+          },
+          "result": -1
+        },
+        {
+          "round": -1,
+          "card": {
+            "id": 20,
+            "description": "You get stuck at the airport for 12 hours",
+            "imageUrl": "/images/airport_delay.jpg",
+            "bad_luck_index": 26
+          },
+          "result": -1
+        },
+        {
+          "round": -1,
+          "card": {
+            "id": 26,
+            "description": "Your flight is overbooked and you are left behind",
+            "imageUrl": "/images/overbooked.jpg",
+            "bad_luck_index": 42
+          },
+          "result": -1
+        },
+        {
+          "round": 0,
+          "card": {
+            "id": 25,
+            "description": "You get a severe sunburn on day one",
+            "imageUrl": "/images/sunburn.jpg",
+            "bad_luck_index": 41.5
+          },
+          "result": "won"
+        },
+        {
+          "round": 1,
+          "card": {
+            "id": 3,
+            "description": "The beach is closed for maintenance",
+            "imageUrl": "/images/beach_closed.jpg",
+            "bad_luck_index": 4
+          },
+          "result": "won"
+        },
+        {
+          "round": 2,
+          "card": {
+            "id": 19,
+            "description": "You are stuck in customs for hours",
+            "imageUrl": "/images/customs_delay.jpg",
+            "bad_luck_index": 23.5
+          },
+          "result": "won"
+        }
+      ],
+      "mistakeCount": 0,
+      "cardsWonCount": 3
+    },
+    ...
+  ]
+  ```
+- **Error codes:**
+  - `400 BAD REQUEST`: user id is required.
+  - `401 UNAUTHORIZED`: the user is not authenticated.
+  - `404: NOT FOUND`: the user does not exists in the database.
+  - `422 UNPROCESSABLE ENTITY`: the request is not in the specified format.
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
+### POST `/api/round/guess`
+  Checks if the position choosen by the user for the new card is correct or not.
+
+- **Request body:**  indexes of the cards defining the interval, and the index of the new card to insert.
+  ```json
+  {
+    "start_index": 0,
+    "end_index": 10,
+    "table_index": 2
+  }
+  ```
+- **Response body:**  `201 CREATED`: success. "Returns a JSON object containing a boolean value that indicates whether the chosen interval is correct or not.
+  ```json
+  {
+    "correct": true
+  }
+  ```
+- **Error codes:**
+  - `400 BAD REQUEST`: start_index must be lower than end_index.
+  - `422 UNPROCESSABLE ENTITY`: the request is not in the specified format.
+  - `500 INTERNAL SERVER ERROR`: generic error if the server crashes.
+
+
 
 ## Database Tables
 

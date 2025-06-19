@@ -312,7 +312,6 @@ function App() {
   };
 
 
-  // TODO: vorresti avere errori diversi in base alla tipologia ma ti dà sempre Invalid credentials
   const handleLogin = async (credentials) => {
     try {
       const loginUser = await logIn(credentials);
