@@ -3,7 +3,7 @@ import { User, Card, Game } from "../../../server/models/models.mjs";
 const URI = "http://localhost:3001/api"
 
 
-
+/* GIUSTO */
 async function logIn(credentials) {
     const bodyObject = {
         email: credentials.email,
@@ -19,10 +19,17 @@ async function logIn(credentials) {
         const user = await response.json();
         return user;
 
+    } else if (response.status === 422) {
+        const errorData = await response.json();
+        throw errorData.errors;
+
+    } else if (response.status === 401) {
+        const err = await response.text();
+        throw [{ msg: err }]; 
+
     } else {
-        console.error("[API] Login failed with status:", response.status);
-        const err = await response.text()
-        throw err;
+        const err = await response.text();
+        throw [{ msg: "Unknown error: " + err }];
     }
 }
 
@@ -35,6 +42,7 @@ async function logout() {
     if (response.ok)
         return null;
 }
+
 
 
 async function fetchRandomCardExcluding(excludeIds = []) {
@@ -51,7 +59,7 @@ async function fetchRandomCardExcluding(excludeIds = []) {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Network error: " + error.message);
+        throw new Error("Failed to fetch a new random card: " + error.message);
     }
 }
 
@@ -73,7 +81,7 @@ async function fetchThreeRandomCards() {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Network error in getting three random cards: " + error);
+        throw new Error("Failed to fetch three random cards: " + error);
     }
 }
 
@@ -91,28 +99,33 @@ async function getCurrentUser() {
 }
 */
 
-
+// GIUSTO 
 async function saveGameToDB(gameData) {
-    const response = await fetch(`${URI}/game`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(gameData)
-    });
+    try {
+        const response = await fetch(`${URI}/game`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ date: new Date().toISOString(), rounds: gameData.rounds, mistakeCount: gameData.mistakeCount, cardsWonCount: gameData.cardsWonCount })
+        });
 
-    if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err);
+        if (!response.ok) {
+            throw new Error(`Application error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        throw new Error('Failed to save game: ' + error.message);
     }
-
-    return await response.json(); // contiene gameId
 }
 
 
 // GIUSTO 
 async function fetchUserGames(userId) {
     try {
-        const response = await fetch(`${URI}/users/${userId}/games`);
+        const response = await fetch(`${URI}/users/${userId}/games`, {
+            credentials: 'include'
+        });
         if (!response.ok) {
             throw new Error(`Application error: ${response.status}`);
         }
@@ -123,22 +136,24 @@ async function fetchUserGames(userId) {
     }
 }
 
-async function validateInterval(start_index, end_index, table_index ) {
-  try {
-    const response = await fetch(`${URI}/round/guess`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ start_index, end_index, table_index  }),
-    });
+// GIUSTO 
+async function validateInterval(start_index, end_index, table_index) {
+    try {
+        const response = await fetch(`${URI}/round/guess`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ start_index, end_index, table_index }),
+        });
 
-    if (!response.ok) throw new Error(`Server error ${response.status}`);
-
-    const data = await response.json();
-    return data.correct; // true o false
-  } catch (error) {
-    console.error("API validateInterval error:", error);
-    throw error;
-  }
+        if (!response.ok) {
+            throw new Error(`Application error: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.correct; // true or false
+    } catch (error) {
+        throw new Error('Failed to check card interval: ' + error.message);
+    }
 }
 
 
@@ -149,4 +164,4 @@ async function validateInterval(start_index, end_index, table_index ) {
 
 
 
-export { fetchRandomCardExcluding, fetchThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, fetchUserGames, validateInterval};
+export { fetchRandomCardExcluding, fetchThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, fetchUserGames, validateInterval };

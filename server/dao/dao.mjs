@@ -40,16 +40,17 @@ export const getThreeRandomCards = async () => {
 
 
 
-
-export async function postGameWithRounds(userId, mistakeCount, cardsWonCount, rounds) {
+/* GIUSTA */
+export async function postGameWithRounds(userId, date, mistakeCount, cardsWonCount, rounds) {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
+      /* A transaction to guarantee atomicity */
       db.run('BEGIN TRANSACTION');
 
       db.run(
         `INSERT INTO Game (user_id, date_created, mistake_count, cards_won_count)
          VALUES (?, ?, ?, ?)`,
-        [userId, new Date().toISOString(), mistakeCount, cardsWonCount],
+        [userId, date, mistakeCount, cardsWonCount],
         function (err) {
           if (err) {
             db.run('ROLLBACK');
@@ -86,6 +87,7 @@ export async function postGameWithRounds(userId, mistakeCount, cardsWonCount, ro
   });
 }
 
+/* GIUSTA */
 export function checkUserExists(userId) {
   return new Promise((resolve, reject) => {
     const sql = `SELECT 1 FROM User WHERE id = ? LIMIT 1`;
@@ -96,6 +98,7 @@ export function checkUserExists(userId) {
   });
 }
 
+/* GIUSTA */
 export function getUserGames(userId) {
   return new Promise((resolve, reject) => {
     const sql = `
@@ -110,12 +113,10 @@ export function getUserGames(userId) {
     `;
 
     db.all(sql, [userId], (err, rows) => {
-      // query fallita
       if (err) {
         return reject(err);
       }
 
-      // Raggruppa i dati per gioco
       const gamesMap = {};
       for (const row of rows) {
         if (!gamesMap[row.game_id]) {

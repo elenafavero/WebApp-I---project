@@ -40,7 +40,7 @@
 - Table `Game` - contains information about each game:
   - `id`: unique identifier of the game
   - `user_id`: identifier of the user who played the game
-  - `date_created`: date when the game started
+  - `date_created`: date when the game was stored in the db
   - `mistake_count`: number of cards guessed incorrectly
   - `cards_won`: number of cards guessed correctly
 

@@ -13,6 +13,9 @@ import { logIn, logout } from './API/API';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const LOWER_BOUND = -1;   
+const UPPER_BOUND = 101;
+
 function App() {
   const [cards, setCards] = useState([]);
   const [error, setError] = useState(null);
@@ -119,8 +122,8 @@ function App() {
   async function handleIntervalClick(startIndex, endIndex) {
     try {
       const isCorrect = await validateInterval(
-        cards[startIndex]?.bad_luck_index ?? -Infinity,
-        cards[endIndex]?.bad_luck_index ?? Infinity,
+        cards[startIndex]?.bad_luck_index ?? LOWER_BOUND,
+        cards[endIndex]?.bad_luck_index ?? UPPER_BOUND,
         tableCard.bad_luck_index
       );
 
@@ -296,9 +299,11 @@ function App() {
       setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
       setUser(loginUser);
       navigate('/start');
-    } catch (err) {
-      setMessage({ msg: "Invalid credentials", type: 'danger' })
-    }
+    } catch (errs) {
+      errs.forEach(e => {
+        setMessage({ msg: e.msg, type: 'danger' })
+      });
+  }
 
   }
 
@@ -355,7 +360,7 @@ function App() {
         </div>
       )}
 
-      
+
       {/* CLIENT ROUTES */}
       <Routes>
         <Route
@@ -367,7 +372,7 @@ function App() {
           <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
 
           {/* Login */}
-          <Route path="login" element={ <LoginForm handleLogin={handleLogin} />} />
+          <Route path="login" element={<LoginForm handleLogin={handleLogin} />} />
 
           {/* Start page */}
           <Route path="start" element={<StartPage loggedIn={loggedIn} />} />
