@@ -21,7 +21,7 @@ function NewCard(props) {
             </div>
 
             {/* Loading spinner */}
-            {(props.gameOver === 1 || props.gameOver === -1) && (
+            {(props.gameOver !== 0 && props.loggedIn) && (
                 <div
                     className="d-flex flex-column align-items-center"
                     style={{
@@ -48,7 +48,7 @@ function NewCard(props) {
 
 
             {/* Message showing the outcome of the last move made */}
-            {props.lastGuessCorrect !== null && props.gameOver === 0 && (
+            {((props.lastGuessCorrect !== null && props.gameOver === 0) || (!props.loggedIn && props.gameOver !== 0)) && (
                 <div
                     className={`feedback-message ${props.lastGuessCorrect === true
                             ? 'feedback-success'

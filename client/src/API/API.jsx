@@ -9,38 +9,49 @@ async function logIn(credentials) {
         email: credentials.email,
         password: credentials.password
     }
-    const response = await fetch(`${URI}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(bodyObject)
-    })
-    if (response.ok) {
-        const user = await response.json();
-        return user;
+    try {
+        const response = await fetch(`${URI}/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(bodyObject)
+        })
+        if (response.ok) {
+            const user = await response.json();
+            return user;
 
-    } else if (response.status === 422) {
-        const errorData = await response.json();
-        throw errorData.errors;
+        } else if (response.status === 422) {
+            const errorData = await response.json();
+            throw errorData.errors;
 
-    } else if (response.status === 401) {
-        const err = await response.text();
-        throw [{ msg: err }]; 
+        } else if (response.status === 401) {
+            const err = await response.text();
+            throw [{ msg: err }];
 
-    } else {
-        const err = await response.text();
-        throw [{ msg: "Unknown error: " + err }];
+        } else {
+            const err = await response.text();
+            throw [{ msg: "Unknown error: " + err }];
+        }
+    } catch (error) {
+        throw new Error("Failed toLog In: " + error.message);
     }
 }
 
 
 async function logout() {
-    const response = await fetch(URI + `/logout`, {
-        method: 'POST',
-        credentials: 'include',
-    });
-    if (response.ok)
-        return null;
+    try {
+        const response = await fetch(URI + `/logout`, {
+            method: 'POST',
+            credentials: 'include',
+        });
+        if (response.ok)
+            return null;
+        else {
+            throw new Error("API error: " + response.status);
+        }
+    } catch (error) {
+        throw new Error("Failed to log out: " + error.message);
+    }
 }
 
 

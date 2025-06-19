@@ -108,7 +108,9 @@ app.post('/api/login', [
 
 
 app.post('/api/logout', (req, res) => {
-  req.logout(() => {
+  req.logout(err => {
+    if (err) 
+      return next(err);
     res.end();
   });
 });

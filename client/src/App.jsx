@@ -13,7 +13,7 @@ import { logIn, logout } from './API/API';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const LOWER_BOUND = -1;   
+const LOWER_BOUND = -1;
 const UPPER_BOUND = 101;
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
 
     async function startGame() {
       try {
-        setLoading(true); // <-- INIZIO CARICAMENTO
+        setLoading(true);
         const initialCards = await fetchThreeRandomCards();
         const excludeIds = initialCards.map(c => c.bad_luck_index);
         const newTableCard = await fetchRandomCardExcluding(excludeIds);
@@ -67,9 +67,9 @@ function App() {
         );
         setError(null);
       } catch (err) {
-        setError("Errore nel caricamento delle carte.");
+        setError("Error fetching initial cards: " + err.message);
       } finally {
-        setLoading(false); // <-- FINE CARICAMENTO
+        setLoading(false);
       }
     }
 
@@ -88,7 +88,8 @@ function App() {
 
     setTimeLeft(30);
 
-    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerRef.current)
+      clearInterval(timerRef.current);
 
     timerRef.current = setInterval(() => {
       setTimeLeft(prev => {
@@ -128,8 +129,8 @@ function App() {
       );
 
       handleGuess(isCorrect);
-    } catch (error) {
-      console.error("Errore durante la validazione:", error);
+    } catch (err) {
+      setError("Error while checking the card position: " + err.message);
     }
   }
 
@@ -139,18 +140,13 @@ function App() {
   function handleGuess(takeCard, isTimeout = false) {
     if (gameOver !== 0 || waitForNextRound) return;
 
-    // FERMA IL TIMER NON APPENA SI INSERISCE LA CARTA
+    // stop the timer as soon as the card is put in an interval
     if (timerRef.current) {
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
 
-
-
-
     setLastGuessCorrect(takeCard ? true : (isTimeout ? 'timeout' : false));
-
-
 
     if (takeCard) {
       const newCards = [...cards, tableCard];
@@ -216,10 +212,13 @@ function App() {
     setWaitForNextRound(false);
     setLastGuessCorrect(null);
 
-    const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
-    const newCard = await fetchRandomCardExcluding(excludeIds);
-
-    setTableCard(newCard);
+    try {
+      const excludeIds = cards.map(c => c.bad_luck_index).concat(tableCard.bad_luck_index);
+      const newCard = await fetchRandomCardExcluding(excludeIds);
+      setTableCard(newCard);
+    } catch (err) {
+      setError("Error fetching a new card: " + err.message);
+    }
     setWaitForNextRound(false);
   }
 
@@ -249,6 +248,15 @@ function App() {
         cardsWonCount: correctGuesses,
       };
 
+      // TODO:
+      /*
+        try {
+        await saveGameToDB(gameData);
+      } catch (err) {
+        console.error("Errore nel salvataggio del game:", err);
+        setError('Error during saving game');
+      }
+      */
       saveGameToDB(gameData).catch(err => {
         console.error("Errore nel salvataggio del game:", err);
       });
@@ -257,6 +265,12 @@ function App() {
   }, [gameOver, loggedIn]);
 
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
 
   if (error) return <div className="alert alert-danger mt-4">{error}</div>;
 
@@ -275,23 +289,28 @@ function App() {
 
     hasInitialized.current = false; // Resetta l'inizializzazione
 
-    const initialCards = await fetchThreeRandomCards();
-    const excludeIds = initialCards.map(c => c.bad_luck_index);
-    const newTableCard = await fetchRandomCardExcluding(excludeIds);
+    try {
+      const initialCards = await fetchThreeRandomCards();
+      const excludeIds = initialCards.map(c => c.bad_luck_index);
+      const newTableCard = await fetchRandomCardExcluding(excludeIds);
 
-    setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
-    setRoundHistory(
-      initialCards.map((card) => ({
-        round: -1,
-        card: card,
-        result: -1
-      }))
-    );
-    setTableCard(newTableCard);
+      setCards(initialCards.sort((a, b) => a.bad_luck_index - b.bad_luck_index));
+      setTableCard(newTableCard);
+      setRoundHistory(
+        initialCards.map((card) => ({
+          round: -1,
+          card: card,
+          result: -1
+        }))
+      );
+
+    } catch (err) {
+      setError("Error fetching initial cards: " + err.message);
+    }
   };
 
 
-
+  // TODO: vorresti avere errori diversi in base alla tipologia ma ti dà sempre Invalid credentials
   const handleLogin = async (credentials) => {
     try {
       const loginUser = await logIn(credentials);
@@ -300,11 +319,19 @@ function App() {
       setUser(loginUser);
       navigate('/start');
     } catch (errs) {
-      errs.forEach(e => {
-        setMessage({ msg: e.msg, type: 'danger' })
-      });
-  }
-
+      // check if there are validation errors
+      const validationErrors = errs.filter(e =>
+        e.msg === 'The email must be a valid email address' ||
+        e.msg === 'The password cannot be empty'
+      );
+      if (validationErrors.length > 0) {
+        // Show the first validation error
+        setError(validationErrors[0].msg);
+      } else {
+        // Show the generic error "Invalid credentials"
+        setError('Invalid credentials');
+      }
+    }
   }
 
   const handleLogout = async () => {
@@ -316,7 +343,7 @@ function App() {
       resetGame();
       navigate('/');
     } catch (err) {
-      setMessage({ msg: 'Error during logout', type: 'danger' });
+      setError('Error during logout');
     }
   }
 
@@ -385,7 +412,7 @@ function App() {
                 <div className="custom-loader" />
               ) : (
                 <>
-                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} />
+                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} loggedIn = {loggedIn} />
                   <ListCards
                     cards={cards}
                     onIntervalClick={handleIntervalClick}
