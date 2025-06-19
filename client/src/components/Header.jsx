@@ -4,12 +4,8 @@ import { useNavigate, useLocation } from 'react-router'
 
 
 function Header(props) {
-    // TODO: quando sei nella pagina di user History, dovrai poter tornare indietro alla schermata "start new game"
     // Hook to navigate between routes
     const navigate = useNavigate();
-    // Hook to get the current location, used to identify the current route
-    const location = useLocation();
-
     
     return (
     <>
@@ -35,7 +31,6 @@ function Header(props) {
     </>
   );
 }
-
 
 
 

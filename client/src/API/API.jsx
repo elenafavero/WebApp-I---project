@@ -1,9 +1,8 @@
-import { User, Card, Game } from "../../../server/models/models.mjs";
+import { Card } from "../../../server/models/models.mjs";
 
 const URI = "http://localhost:3001/api"
 
 
-/* GIUSTO */
 async function logIn(credentials) {
     const bodyObject = {
         email: credentials.email,
@@ -55,7 +54,7 @@ async function logout() {
 }
 
 
-
+// retrieves a random card, excluding the ones with the given IDs
 async function fetchRandomCardExcluding(excludeIds = []) {
     try {
         const queryString = excludeIds.length > 0 ? `?exclude=${excludeIds.join(',')}` : '';
@@ -79,7 +78,7 @@ async function fetchRandomCardExcluding(excludeIds = []) {
 
 
 
-// get 3 cards randomly
+// retrieves 3 cards randomly
 async function fetchThreeRandomCards() {
     try {
         const response = await fetch(`${URI}/cards/3`, {
@@ -99,20 +98,7 @@ async function fetchThreeRandomCards() {
 
 
 
-/*
-async function getCurrentUser() {
-    const res = await fetch(URI + '/session/current', {
-        credentials: 'include'
-    });
-
-    if (!res.ok) throw new Error("Not authenticated");
-    return res.json();
-}
-*/
-
-// GIUSTO 
 async function saveGameToDB(gameData) {
-    console.log(JSON.stringify({ date: new Date().toISOString(), rounds: gameData.rounds, mistakeCount: gameData.mistakeCount, cardsWonCount: gameData.cardsWonCount }));
     try {
         const response = await fetch(`${URI}/game`, {
             method: 'POST',
@@ -132,7 +118,6 @@ async function saveGameToDB(gameData) {
 }
 
 
-// GIUSTO 
 async function fetchUserGames(userId) {
     try {
         const response = await fetch(`${URI}/users/${userId}/games`, {
@@ -148,7 +133,6 @@ async function fetchUserGames(userId) {
     }
 }
 
-// GIUSTO 
 async function validateInterval(start_index, end_index, table_index) {
     try {
         const response = await fetch(`${URI}/round/guess`, {
@@ -170,10 +154,4 @@ async function validateInterval(start_index, end_index, table_index) {
 
 
 
-
-
-
-
-
-
-export { fetchRandomCardExcluding, fetchThreeRandomCards, logIn, logout, /*getCurrentUser,*/ saveGameToDB, fetchUserGames, validateInterval };
+export { fetchRandomCardExcluding, fetchThreeRandomCards, logIn, logout, saveGameToDB, fetchUserGames, validateInterval };

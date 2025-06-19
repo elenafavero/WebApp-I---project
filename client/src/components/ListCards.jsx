@@ -1,8 +1,7 @@
-import { useNavigate, useLocation } from 'react-router'
 import React from 'react';
 
 
-function ListCards(props) { // cards
+function ListCards(props) { 
 
     const cards = props.cards;
 

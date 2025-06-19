@@ -1,4 +1,3 @@
-import React from 'react';
 import '../App.css';
 
 function NewCard(props) {
@@ -78,8 +77,6 @@ function NewCard(props) {
                         />
                         <div className="card-body d-flex flex-column justify-content-between" style={{ padding: '0.4rem' }}>
                             <p className="card-text" style={{ fontSize: '0.80rem' }}>{tableCard.description}</p>
-                            {/* TODO: Per togliere il bad luck index cancella la prossima riga */}
-                            <p className="text-muted" style={{ fontSize: '0.80rem' }}>Bad Luck Index: {tableCard.bad_luck_index}</p>
                         </div>
                     </div>
                 )}
