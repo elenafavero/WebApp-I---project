@@ -68,7 +68,7 @@ function App() {
         );
         setError(null);
       } catch (err) {
-        setError("Error fetching initial cards: " + err.message);
+        setError({ msg: "Error fetching initial cards: " + err.message, type: 'fatal' });
       } finally {
         setLoading(false);
       }
@@ -131,7 +131,7 @@ function App() {
 
       handleGuess(isCorrect);
     } catch (err) {
-      setError("Error while checking the card position: " + err.message);
+      setError({ msg: "Error while checking the card position: " + err.message, type: 'fatal' });
     }
   }
 
@@ -214,7 +214,7 @@ function App() {
       const newCard = await fetchRandomCardExcluding(excludeIds);
       setTableCard(newCard);
     } catch (err) {
-      setError("Error fetching a new card: " + err.message);
+      setError({ msg: "Error fetching a new card: " + err.message, type: 'fatal' });
     }
     setWaitForNextRound(false);
   }
@@ -245,17 +245,17 @@ function App() {
         try {
           await saveGameToDB(gameData);
         } catch (err) {
-          setError('Error during saving game');
+          setError({ msg: 'Error during saving game', type: 'fatal' });
         }
       };
 
-      saveGame(); 
+      saveGame();
     }
   }, [gameOver, loggedIn]);
 
 
   useEffect(() => {
-    if (error) {
+    if (error?.type === 'transient') {
       const timer = setTimeout(() => setError(null), 3000);
       return () => clearTimeout(timer);
     }
@@ -275,7 +275,7 @@ function App() {
     setCards([]);
     setTableCard(null);
 
-    hasInitialized.current = false; 
+    hasInitialized.current = false;
 
     try {
       const initialCards = await fetchThreeRandomCards();
@@ -293,7 +293,7 @@ function App() {
       );
 
     } catch (err) {
-      setError("Error fetching initial cards: " + err.message);
+      setError({ msg: "Error fetching initial cards: " + err.message, type: 'fatal' });
     }
   };
 
@@ -305,18 +305,28 @@ function App() {
       setMessage({ msg: `Welcome, ${loginUser.name}!`, type: 'success' });
       setUser(loginUser);
       navigate('/start');
-    } catch (errs) {
-      const validationErrors = errs.filter(e =>
-        e.msg === 'The email must be a valid email address' ||
-        e.msg === 'The password cannot be empty'
-      );
-      if (validationErrors.length > 0) {
-        setError(validationErrors[0].msg);
-      } else {
-        setError('Invalid credentials');
+    } catch (err) {
+      if (Array.isArray(err)) {
+        const validationErrors = err.filter(e =>
+          e.msg === 'The email must be a valid email address' ||
+          e.msg === 'The password cannot be empty'
+        );
+        if (validationErrors.length > 0) {
+          setError({ msg: validationErrors[0].msg, type: 'transient' });
+          return;
+        }
+        setError({ msg: 'Invalid credentials', type: 'transient' });
+      }
+      else if (err.message) {
+        setError({ msg: `Network error: ${err.message}`, type: 'fatal' });
+      }
+      else {
+        setError({ msg: 'Unknown error occurred', type: 'fatal' });
       }
     }
   }
+
+
 
   const handleLogout = async () => {
     try {
@@ -327,7 +337,7 @@ function App() {
       resetGame();
       navigate('/');
     } catch (err) {
-      setError('Error during logout');
+      setError({ msg: 'Error during logout', type: 'fatal' });
     }
   }
 
@@ -370,74 +380,86 @@ function App() {
       )}
 
       {error && (
-        <div className="alert alert-danger mt-4" style={{ position: 'fixed', top: '90px', zIndex: 999 }}>
-          {error}
+        <div
+          className="alert alert-danger mt-4"
+          style={{
+            position: 'fixed',
+            top: error.type === 'fatal' ? '300px' : '95px',
+            left: '50%',
+            transform: error.type === 'fatal' ? 'translate(-50%, -50%)' : 'translateX(-50%)',
+            zIndex: 1050,
+            textAlign: 'center',
+          }}
+        >
+          {error.msg}
         </div>
       )}
 
 
       {/* CLIENT ROUTES */}
-      <Routes>
-        <Route
-          path="/"
-          element={<Header loggedIn={loggedIn} handleLogout={handleLogout} />}
-        >
-
-          {/* Home page: welcome and choose version */}
-          <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
-
-          {/* Login */}
-          <Route path="login" element={<LoginForm handleLogin={handleLogin} />} />
-
-          {/* Start page */}
-          <Route path="start" element={<StartPage loggedIn={loggedIn} />} />
-
-          {/* Game starts */}
+      {(!error || error.type !== 'fatal') && (
+        <Routes>
           <Route
-            path="game"
-            element={
-              loading ? (
-                <div className="custom-loader" />
-              ) : (
-                <>
-                  <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} loggedIn={loggedIn} />
-                  <ListCards
-                    cards={cards}
-                    onIntervalClick={handleIntervalClick}
-                    waitForNextRound={waitForNextRound}
-                    proceedToNextRound={proceedToNextRound}
-                    gameOver={gameOver}
-                    loggedIn={loggedIn}
-                  />
-                </>
-              )
-            }
-          />
+            path="/"
+            element={<Header loggedIn={loggedIn} handleLogout={handleLogout} />}
+          >
+
+            {/* Home page: welcome and choose version */}
+            <Route index element={<Welcome handleLogout={handleLogout} loggedIn={loggedIn} />} />
+
+            {/* Login */}
+            <Route path="login" element={<LoginForm handleLogin={handleLogin} />} />
+
+            {/* Start page */}
+            <Route path="start" element={<StartPage loggedIn={loggedIn} />} />
+
+            {/* Game starts */}
+            <Route
+              path="game"
+              element={
+                loading ? (
+                  <div className="custom-loader" />
+                ) : (
+                  <>
+                    <NewCard tableCard={tableCard} timeLeft={timeLeft} gameOver={gameOver} lastGuessCorrect={lastGuessCorrect} loggedIn={loggedIn} />
+                    <ListCards
+                      cards={cards}
+                      onIntervalClick={handleIntervalClick}
+                      waitForNextRound={waitForNextRound}
+                      proceedToNextRound={proceedToNextRound}
+                      gameOver={gameOver}
+                      loggedIn={loggedIn}
+                    />
+                  </>
+                )
+              }
+            />
 
 
-          {/* Game result (+ summary)*/}
-          <Route
-            path="game/result"
-            element={<ShowResult gameOver={gameOver} resetGame={resetGame} cards={cards} onIntervalClick={handleIntervalClick}
-              waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound} loggedIn={loggedIn}
-            />}
-          />
+            {/* Game result (+ summary)*/}
+            <Route
+              path="game/result"
+              element={<ShowResult gameOver={gameOver} resetGame={resetGame} cards={cards} onIntervalClick={handleIntervalClick}
+                waitForNextRound={waitForNextRound} proceedToNextRound={proceedToNextRound} loggedIn={loggedIn}
+              />}
+            />
 
-          <Route
-            path="profile"
-            element={
-              <Profile
-                userId={loggedIn && user ? user.id : null}
-                loggedIn={loggedIn}
-              />
-            }
-          />
+            <Route
+              path="profile"
+              element={
+                <Profile
+                  userId={loggedIn && user ? user.id : null}
+                  loggedIn={loggedIn}
+                />
+              }
+            />
 
 
 
-        </Route>
+          </Route>
 
-      </Routes>
+        </Routes>
+      )}
     </div >
   );
 

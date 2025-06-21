@@ -49,7 +49,7 @@ async function logout() {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Failed to log out: " + error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -69,7 +69,7 @@ async function fetchRandomCardExcluding(excludeIds = []) {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Failed to fetch a new random card: " + error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -89,7 +89,7 @@ async function fetchThreeRandomCards() {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Failed to fetch three random cards: " + error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -111,7 +111,7 @@ async function saveGameToDB(gameData) {
         const data = await response.json();
         return data;
     } catch (error) {
-        throw new Error('Failed to save game: ' + error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -127,7 +127,7 @@ async function fetchUserGames(userId) {
         const data = await response.json();
         return data;
     } catch (error) {
-        throw new Error('Failed to fetch user games: ' + error.message);
+        throw new Error(error.message);
     }
 }
 
@@ -147,7 +147,7 @@ async function validateInterval(start_index, end_index, table_index) {
         const data = await response.json();
         return data.correct; // true or false
     } catch (error) {
-        throw new Error('Failed to check card interval: ' + error.message);
+        throw new Error(error.message);
     }
 }
 

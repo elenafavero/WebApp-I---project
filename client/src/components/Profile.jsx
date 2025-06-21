@@ -25,7 +25,7 @@ function Profile(props) {
                 setGames(userGames);
                 setError(null);
             } catch (err) {
-                setError(err.message);
+                setError({ msg: err.message, type: 'fatal' });
             } finally {
                 setLoading(false);
             }
@@ -70,16 +70,14 @@ function Profile(props) {
                     className="alert alert-danger mt-4"
                     style={{
                         position: 'fixed',
-                        top: '320px',
-                        zIndex: 999,
-                        width: '100%',
-                        maxWidth: '500px',
-                        margin: '0 auto',
-                        left: 0,
-                        right: 0,
+                        top: '300px',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        zIndex: 1050,
+                        textAlign: 'center',
                     }}
                 >
-                    {error}
+                    {error.msg}
                 </div>
             ) : games.length === 0 ? (
                 <div className="no-games-message">
