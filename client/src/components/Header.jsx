@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router'
 
 
 function Header(props) {
-  // Hook to navigate between routes
   const navigate = useNavigate();
   const location = useLocation();
 

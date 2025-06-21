@@ -192,7 +192,7 @@ function App() {
 
 
   async function proceedToNextRound() {
-    if (gameOver !== 0 && loggedIn) return; // se partita finita 
+    if (gameOver !== 0 && loggedIn) return; 
 
     // to be added in order to properly handle subsequent demo rounds
     if (!loggedIn) {
@@ -435,7 +435,6 @@ function App() {
               }
             />
 
-
             {/* Game result (+ summary)*/}
             <Route
               path="game/result"
@@ -453,9 +452,6 @@ function App() {
                 />
               }
             />
-
-
-
           </Route>
 
         </Routes>

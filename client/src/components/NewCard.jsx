@@ -16,7 +16,7 @@ function NewCard(props) {
                 boxShadow: '0 0 5px rgba(0,0,0,0.1)',
                 zIndex: 1000
             }}>
-                {"\u23F3"} Tempo rimasto: <strong>{props.timeLeft}</strong> secondi
+                {"\u23F3"} Time left: <strong>{props.timeLeft}</strong> seconds
             </div>
 
             {/* Loading spinner */}

@@ -26,8 +26,7 @@ export const getUser = (email, password) => {
                     }
                     else {
                         resolve(user);
-                    }
-                        
+                    }     
                 });
             }
         });

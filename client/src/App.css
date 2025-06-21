@@ -1,6 +1,6 @@
 /* NavBar */
 .custom-navbar {
-  background-color: #2196F3; /* blu originale */
+  background-color: #2196F3; 
   padding: 10px 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -13,14 +13,14 @@
 
 .navbar-title {
   font-family: 'Fredoka', sans-serif;
-  font-size: 2.3rem; /* aumentata la dimensione */
+  font-size: 2.3rem; 
   font-weight: 600;
   color: white;
   position: relative;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Contorno arancione più spesso */
+
 .navbar-title::after {
   content: 'Stuff Happens';
   position: absolute;
@@ -126,7 +126,7 @@
   margin: 2rem auto 0 auto;
 }
 
-/* Stile for: Welcome Page */
+/* Welcome Page */
 .welcome-container {
     padding: 40px 20px;
     min-height: 80vh;
@@ -185,8 +185,8 @@
 
 
 
-/* Stile for: Start Page */
-    /* "User Games Overview */
+/* Start Page */
+    /* User Games Overview */
 .section-title {
   font-family: 'Fredoka', 'Segoe UI', sans-serif;
   font-size: 2.2rem;
@@ -346,7 +346,7 @@
 .game-rounds-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 12px; /* spaziatura verticale tra righe */
+    border-spacing: 0 12px; 
 }
 
 .game-rounds-table th {
