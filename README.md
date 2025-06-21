@@ -380,7 +380,11 @@
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+![User History](./UserHistory.png)
+
+
+![Game](./Game.png)
+
 
 ## Users Credentials
 
