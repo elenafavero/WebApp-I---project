@@ -380,9 +380,10 @@
 
 ## Screenshot
 
+### `User History`
 ![User History](./UserHistory.png)
 
-
+### `During the game`
 ![Game](./Game.png)
 
 
