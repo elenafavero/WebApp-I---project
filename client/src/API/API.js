@@ -76,8 +76,6 @@ async function fetchRandomCardExcluding(excludeIds = []) {
 
 
 
-
-
 // retrieves 3 cards randomly
 async function fetchThreeRandomCards() {
     try {
@@ -91,7 +89,7 @@ async function fetchThreeRandomCards() {
             throw new Error("API error: " + response.status);
         }
     } catch (error) {
-        throw new Error("Failed to fetch three random cards: " + error);
+        throw new Error("Failed to fetch three random cards: " + error.message);
     }
 }
 
@@ -132,6 +130,7 @@ async function fetchUserGames(userId) {
         throw new Error('Failed to fetch user games: ' + error.message);
     }
 }
+
 
 async function validateInterval(start_index, end_index, table_index) {
     try {

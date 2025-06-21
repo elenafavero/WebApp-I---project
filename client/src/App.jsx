@@ -245,7 +245,6 @@ function App() {
         try {
           await saveGameToDB(gameData);
         } catch (err) {
-          console.error("Errore nel salvataggio del game:", err);
           setError('Error during saving game');
         }
       };

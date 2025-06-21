@@ -2,15 +2,16 @@ import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 import { getThreeRandomCards, getRandomCardExcluding, postGameWithRounds, getUserGames, checkUserExists } from './dao/dao.mjs';
+import { getUser } from './dao/dao-user.mjs';
 
 import { check, query, validationResult } from 'express-validator';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { getUser } from './dao/dao-user.mjs';
 import session from 'express-session';
 
 const LOWER_BOUND = -1;   
 const UPPER_BOUND = 101;
+
 
 // init express
 const app = new express();
@@ -32,7 +33,8 @@ app.listen(port, () => {
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Allow requests only from this specific origin, our frontend running on localhost:5173
+
+// Allow requests only from this specific origin. frontend running on localhost:5173
 const corsOptions = {
   origin: 'http://localhost:5173',
   optionsSuccessStatus: 200,
@@ -120,8 +122,9 @@ app.post('/api/logout', (req, res) => {
   });
 });
 
+
 /*
-200 OK	Risorsa richiesta con successo
+200 OK
 422 Unprocessable Entity
 500 Internal Server Error	
 */
@@ -164,6 +167,7 @@ app.get('/api/cards/1', [
   }
 });
 
+
 /*
 200 OK
 500 Internal Server Error
@@ -178,22 +182,14 @@ app.get('/api/cards/3', async (req, res) => {
 });
 
 
-/*
-app.get('/api/session/current', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json(req.user);  // user is stored in the session by passport
-  } else {
-    res.status(401).json({ error: 'Not authenticated' });
-  }
-});
-*/
+
 
 /*
- 201 Created	Risorsa creata con successo	Dopo una POST che crea una nuova risorsa (es. un nuovo utente). Include spesso un header Location con l'URL della risorsa.
- 400 Bad Request	Richiesta invalida	Dati mancanti o malformati nel body della richiesta (es. JSON non valido).
- 401 Unauthorized	Non autorizzato	Manca l'autenticazione per eseguire l'azione.
- 422 Unprocessable Entity	Dati non elaborabili	Sintassi corretta, ma semantica invalida (es. campi obbligatori mancanti).
-[!] 500 Internal Server Error	Errore server
+ 201 Creatd
+ 400 Bad Request	
+ 401 Unauthorized	
+ 422 Unprocessable 
+ 500 Internal Server Error	
 */
 app.post('/api/game', isLoggedIn, [
   check('date').isISO8601(),
@@ -257,10 +253,10 @@ app.get('/api/users/:userId/games', isLoggedIn, [
 
 
 /*
-201 Created { "correct": true } or { "correct": false }
-- 400 Bad Request { "error": "start_index must be less than end_index" }
-- 422 Unprocessable Entity { "errors": [{ "msg": "start_index must be a number" }, { "msg": "end_index must be a number" }, { "msg": "table_index must be a number" }] }
-500 Internal Server Error { "error": "Server error" }
+201 Created 
+400 Bad Request
+422 Unprocessable Entity  
+500 Internal Server Error 
 */
 app.post('/api/round/guess', [
   check('start_index').isFloat({ min: LOWER_BOUND, max: UPPER_BOUND }).withMessage('start_index must be a number between 0 and 100'),
@@ -287,7 +283,6 @@ app.post('/api/round/guess', [
 
 
 
-// TODO: Gestione globale degli errori (ti gestisce quelli che non hai gestito in modo manuale)
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Internal Server Error' });

@@ -41,7 +41,9 @@ function Profile(props) {
         return 'In progress';
     };
 
-    {/* Loading spinner */}
+
+
+    {/* Loading spinner */ }
     if (loading) {
         return (
             <div className="d-flex justify-content-center align-items-center" style={{ height: '50vh' }}>
@@ -50,20 +52,6 @@ function Profile(props) {
         );
     }
 
-    {/* Error in fetching games */}
-    if (error) {
-        return <p className="text-danger text-center mt-4">Error: {error}</p>;
-    }
-
-    {/* No games found in the db */}
-    if (!loading && games.length === 0) {
-        return (
-            <div className="no-games-message">
-                <h2 className="no-games-title">No games yet!</h2>
-                <p className="no-games-subtitle">Start playing to see your game history here.</p>
-            </div>
-        );
-    }
 
 
 
@@ -77,50 +65,71 @@ function Profile(props) {
 
     return (
         <div className="container mt-4 profile-container">
-            <h2 className="section-title text-center mb-4">User Games Overview</h2>
-            {games.map(game => (
-                <div key={game.id} className="game-table-wrapper">
-                    <h3 className="game-date" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                        <span>
-                            Game from {new Date(game.date_created).toLocaleDateString()}
-                        </span>
-                        <span className="game-result">
-                            {getGameResult(game)}
-                        </span>
-                    </h3>
-                    <div className="game-stats" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span><b>Mistakes:</b> {game.mistake_count}</span>
-                        <span><b>Cards Won:</b> {game.cards_won_count}</span>
-                        <span style={{ marginLeft: 'auto' }}><b>Total Cards collected:</b> {game.cards_won_count + 3}</span>
-                    </div>
-                    <table className="game-rounds-table">
-                        <thead>
-                            <tr>
-                                <th>Round #</th>
-                                <th>Card</th>
-                                <th>Description</th>
-                                <th>Result</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {game.rounds.map(round => (
-                                <tr key={round.id}>
-                                    <td>{round.round_number === -1 ? `initial card` : round.round_number}</td>
-                                    <td>
-                                        <img
-                                            src={round.card.image_url}
-                                            alt={round.card.description}
-                                            className="round-card-image"
-                                        />
-                                    </td>
-                                    <td>{round.card.description}</td>
-                                    <td>{getResultBadge(round.is_won)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            {error ? (
+                <div
+                    className="alert alert-danger mt-4"
+                    style={{
+                        position: 'fixed',
+                        top: '320px',
+                        zIndex: 999,
+                        width: '100%',
+                        maxWidth: '500px',
+                        margin: '0 auto',
+                        left: 0,
+                        right: 0,
+                    }}
+                >
+                    {error}
                 </div>
-            ))}
+            ) : games.length === 0 ? (
+                <div className="no-games-message">
+                    <h2 className="no-games-title">No games yet!</h2>
+                    <p className="no-games-subtitle">Start playing to see your game history here.</p>
+                </div>
+            ) : (
+                <>
+                    <h2 className="section-title text-center mb-4">User Games Overview</h2>
+                    {games.map(game => (
+                        <div key={game.id} className="game-table-wrapper">
+                            <h3 className="game-date" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                <span>Game from {new Date(game.date_created).toLocaleDateString()}</span>
+                                <span className="game-result">{getGameResult(game)}</span>
+                            </h3>
+                            <div className="game-stats" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span><b>Mistakes:</b> {game.mistake_count}</span>
+                                <span><b>Cards Won:</b> {game.cards_won_count}</span>
+                                <span style={{ marginLeft: 'auto' }}><b>Total Cards collected:</b> {game.cards_won_count + 3}</span>
+                            </div>
+                            <table className="game-rounds-table">
+                                <thead>
+                                    <tr>
+                                        <th>Round #</th>
+                                        <th>Card</th>
+                                        <th>Description</th>
+                                        <th>Result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {game.rounds.map(round => (
+                                        <tr key={round.id}>
+                                            <td>{round.round_number === -1 ? `initial card` : round.round_number}</td>
+                                            <td>
+                                                <img
+                                                    src={round.card.image_url}
+                                                    alt={round.card.description}
+                                                    className="round-card-image"
+                                                />
+                                            </td>
+                                            <td>{round.card.description}</td>
+                                            <td>{getResultBadge(round.is_won)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    ))}
+                </>
+            )}
         </div>
     );
 }

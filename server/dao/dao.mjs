@@ -40,11 +40,10 @@ export const getThreeRandomCards = async () => {
 
 
 
-/* GIUSTA */
 export async function postGameWithRounds(userId, date, mistakeCount, cardsWonCount, rounds) {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
-      /* A transaction to guarantee atomicity */
+      // A transaction to guarantee atomicity 
       db.run('BEGIN TRANSACTION');
 
       db.run(
@@ -87,18 +86,19 @@ export async function postGameWithRounds(userId, date, mistakeCount, cardsWonCou
   });
 }
 
-/* GIUSTA */
+
 export function checkUserExists(userId) {
   return new Promise((resolve, reject) => {
     const sql = `SELECT 1 FROM User WHERE id = ? LIMIT 1`;
     db.get(sql, [userId], (err, row) => {
-      if (err) return reject(err);
-      resolve(!!row); // true se esiste, false altrimenti
+      if (err) 
+        return reject(err);
+      resolve(!!row); // true if they exist, false otherwise
     });
   });
 }
 
-/* GIUSTA */
+
 export function getUserGames(userId) {
   return new Promise((resolve, reject) => {
     const sql = `
