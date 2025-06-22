@@ -381,10 +381,10 @@
 ## Screenshot
 
 ### `User History`
-![User History](./UserHistory.png)
+![User History](./images/UserHistory.png)
 
 ### `During the game`
-![Game](./Game.png)
+![Game](./images/Game.png)
 
 
 ## Users Credentials
