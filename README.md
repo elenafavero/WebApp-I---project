@@ -389,5 +389,5 @@
 
 ## Users Credentials
 
-- faveroelena2@gmail.co, CasaBlu
+- faveroelena2@gmail.com, CasaBlu
 - mariobros@gmail.com, RagnoViola
